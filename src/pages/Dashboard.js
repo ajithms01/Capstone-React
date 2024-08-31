@@ -1,24 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, PlusCircle, LogOut } from 'lucide-react';
+import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import NavBar from '../components/NavBar';
 
-const events = [
-  { id: 1, title: 'Team Meeting', date: '2024-08-30', time: '10:00 AM' },
-  { id: 2, title: 'Project Deadline', date: '2024-09-15', time: '11:59 PM' },
-  { id: 3, title: 'Conference Call', date: '2024-09-05', time: '2:00 PM' },
-];
-
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('events');
+  const [events, setEvents] = useState([]);
   const today = new Date();
-  
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get('http://localhost:8082/client/events?clientId=1');
+        console.log('Fetched events:', response.data); // Debugging line
+        setEvents(response.data);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   // Function to filter events
   const getFilteredEvents = () => {
-    return events.filter(event => {
+    const filteredEvents = events.filter(event => {
       const eventDate = new Date(event.date);
       return eventDate >= today;
     });
+    console.log('Filtered events:', filteredEvents); // Debugging line
+    return filteredEvents;
   };
 
   return (
@@ -39,8 +51,8 @@ const Dashboard = () => {
               <div className="space-y-4">
                 {getFilteredEvents().map((event) => (
                   <div key={event.id} className="bg-white p-4 rounded-lg shadow">
-                    <h3 className="font-semibold text-lg text-gray-800">{event.title}</h3>
-                    <p className="text-gray-600">{event.date} at {event.time}</p>
+                    <h3 className="font-semibold text-lg text-gray-800">{event.name}</h3>
+                    <p className="text-gray-600">{event.date} at {event.type}</p>
                   </div>
                 ))}
               </div>
