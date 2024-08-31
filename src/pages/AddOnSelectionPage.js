@@ -1,23 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import NavBar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
 
-// Dummy data for add-ons - replace this with your API call
-const dummyAddOns = [
-  { id: 1, type: "Photography", vendorName: "SnapPro", vendorLocation: "Downtown", vendorPhone: "123-456-7890", rent: 1000 },
-  { id: 2, type: "Light and Sound", vendorName: "BrightBeats", vendorLocation: "Midtown", vendorPhone: "234-567-8901", rent: 1500 },
-  { id: 3, type: "Decoration", vendorName: "ElegantDecor", vendorLocation: "Uptown", vendorPhone: "345-678-9012", rent: 800 },
-  { id: 4, type: "Photography", vendorName: "MemoryMakers", vendorLocation: "Suburb", vendorPhone: "456-789-0123", rent: 1200 },
-  { id: 5, type: "Light and Sound", vendorName: "SoundWave", vendorLocation: "City Center", vendorPhone: "567-890-1234", rent: 1300 },
-  { id: 6, type: "Decoration", vendorName: "FestiveFlair", vendorLocation: "Historic District", vendorPhone: "678-901-2345", rent: 900 },
-];
-
-// Dummy data for selected venues - replace this with actual data from your state management
-const dummySelectedVenues = [
-  { id: 1, name: "Grand Ballroom", rent: 5000 },
-  { id: 2, name: "Seaside Resort", rent: 4000 },
-];
-
+// Define or import AddOnCard component if it's not defined elsewhere
 const AddOnCard = ({ addOn, onSelect }) => (
   <div className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between">
     <div>
@@ -25,7 +11,7 @@ const AddOnCard = ({ addOn, onSelect }) => (
       <p>Vendor: {addOn.vendorName}</p>
       <p>Location: {addOn.vendorLocation}</p>
       <p>Phone: {addOn.vendorPhone}</p>
-      <p>Rent: ${addOn.rent}</p>
+      <p>Rate: ${addOn.rate}</p> {/* Changed from rent to rate */}
     </div>
     <button 
       onClick={() => onSelect(addOn)}
@@ -36,22 +22,50 @@ const AddOnCard = ({ addOn, onSelect }) => (
   </div>
 );
 
+const dummySelectedVenues = [
+  { id: 1, name: "Grand Ballroom", rent: 5000 }
+];
+
 const AddOnSelectionPage = () => {
   const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [totalBudget, setTotalBudget] = useState(
     dummySelectedVenues.reduce((sum, venue) => sum + venue.rent, 0)
   );
+  const [vendors, setVendors] = useState([]);
+  const [location, setLocation] = useState("Midtown"); // Example location
+  const [date, setDate] = useState(new Date()); // Example date
+  const [type, setType] = useState(""); // Optional type, can be set based on user selection
+
+  useEffect(() => {
+    const fetchVendors = async () => {
+      try {
+        const response = await axios.get('http://localhost:8082/vendor/getVendorByChoice', {
+          params: {
+            location,
+            date: date.toISOString().split('T')[0], // Format date as yyyy-MM-dd
+            type: type || undefined, // Send type only if it's set
+          },
+        });
+        setVendors(response.data);
+      } catch (error) {
+        console.error('Error fetching vendors:', error);
+        alert('Failed to fetch vendors. Please try again later.');
+      }
+    };
+
+    fetchVendors();
+  }, [location, date, type]); // Fetch vendors when location, date, or type changes
 
   const handleSelectAddOn = (addOn) => {
-    if (!selectedAddOns.find(a => a.id === addOn.id)) {
+    if (!selectedAddOns.find(a => a.vendorId === addOn.vendorId)) { // Use vendorId for uniqueness
       setSelectedAddOns([...selectedAddOns, addOn]);
-      setTotalBudget(totalBudget + addOn.rent);
+      setTotalBudget(totalBudget + addOn.rate); // Changed from rent to rate
     }
   };
 
   const handleRemoveAddOn = (addOn) => {
-    setSelectedAddOns(selectedAddOns.filter(a => a.id !== addOn.id));
-    setTotalBudget(totalBudget - addOn.rent);
+    setSelectedAddOns(selectedAddOns.filter(a => a.vendorId !== addOn.vendorId)); // Use vendorId for uniqueness
+    setTotalBudget(totalBudget - addOn.rate); // Changed from rent to rate
   };
 
   return (
@@ -65,8 +79,8 @@ const AddOnSelectionPage = () => {
             <div className="flex-grow bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Add-Ons</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {dummyAddOns.map(addOn => (
-                  <AddOnCard key={addOn.id} addOn={addOn} onSelect={handleSelectAddOn} />
+                {vendors.map(addOn => (
+                  <AddOnCard key={addOn.vendorId} addOn={addOn} onSelect={handleSelectAddOn} /> 
                 ))}
               </div>
             </div>
@@ -84,10 +98,10 @@ const AddOnSelectionPage = () => {
                 ))}
                 <h3 className="text-xl font-semibold mt-6">Add-Ons</h3>
                 {selectedAddOns.map(addOn => (
-                  <div key={addOn.id} className="flex justify-between items-center">
-                    <span>{addOn.type} - {addOn.vendorName}</span>
+                  <div key={addOn.vendorId} className="flex justify-between items-center">
+                    <span>{addOn.vendorName}</span>
                     <div>
-                      <span className="mr-4">${addOn.rent}</span>
+                      <span className="mr-4">${addOn.rate}</span> {/* Changed from rent to rate */}
                       <button 
                         onClick={() => handleRemoveAddOn(addOn)}
                         className="text-red-500 hover:text-red-700"
