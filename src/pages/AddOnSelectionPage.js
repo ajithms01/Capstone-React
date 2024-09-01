@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import NavBar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
@@ -11,7 +12,7 @@ const AddOnCard = ({ addOn, onSelect }) => (
       <p>Vendor: {addOn.vendorName}</p>
       <p>Location: {addOn.vendorLocation}</p>
       <p>Phone: {addOn.vendorPhone}</p>
-      <p>Rate: ${addOn.rate}</p> {/* Changed from rent to rate */}
+      <p>Rate: ${addOn.rate}</p>
     </div>
     <button 
       onClick={() => onSelect(addOn)}
@@ -22,14 +23,13 @@ const AddOnCard = ({ addOn, onSelect }) => (
   </div>
 );
 
-const dummySelectedVenues = [
-  { id: 1, name: "Grand Ballroom", rent: 5000 }
-];
-
 const AddOnSelectionPage = () => {
+  const locationData = useLocation();
+  const { selectedVenues } = locationData.state || { selectedVenues: [] };
+  
   const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [totalBudget, setTotalBudget] = useState(
-    dummySelectedVenues.reduce((sum, venue) => sum + venue.rent, 0)
+    selectedVenues.reduce((sum, venue) => sum + venue.rent, 0)
   );
   const [vendors, setVendors] = useState([]);
   const [location, setLocation] = useState("Midtown"); // Example location
@@ -54,18 +54,18 @@ const AddOnSelectionPage = () => {
     };
 
     fetchVendors();
-  }, [location, date, type]); // Fetch vendors when location, date, or type changes
+  }, [location, date, type]);
 
   const handleSelectAddOn = (addOn) => {
-    if (!selectedAddOns.find(a => a.vendorId === addOn.vendorId)) { // Use vendorId for uniqueness
+    if (!selectedAddOns.find(a => a.vendorId === addOn.vendorId)) {
       setSelectedAddOns([...selectedAddOns, addOn]);
-      setTotalBudget(totalBudget + addOn.rate); // Changed from rent to rate
+      setTotalBudget(totalBudget + addOn.rate);
     }
   };
 
   const handleRemoveAddOn = (addOn) => {
-    setSelectedAddOns(selectedAddOns.filter(a => a.vendorId !== addOn.vendorId)); // Use vendorId for uniqueness
-    setTotalBudget(totalBudget - addOn.rate); // Changed from rent to rate
+    setSelectedAddOns(selectedAddOns.filter(a => a.vendorId !== addOn.vendorId));
+    setTotalBudget(totalBudget - addOn.rate);
   };
 
   return (
@@ -80,7 +80,7 @@ const AddOnSelectionPage = () => {
               <h2 className="text-2xl font-bold mb-6">Add-Ons</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {vendors.map(addOn => (
-                  <AddOnCard key={addOn.vendorId} addOn={addOn} onSelect={handleSelectAddOn} /> 
+                  <AddOnCard key={addOn.vendorId} addOn={addOn} onSelect={handleSelectAddOn} />
                 ))}
               </div>
             </div>
@@ -90,7 +90,7 @@ const AddOnSelectionPage = () => {
               <h2 className="text-2xl font-bold mb-6">Selected Items</h2>
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold">Venues</h3>
-                {dummySelectedVenues.map(venue => (
+                {selectedVenues.map(venue => (
                   <div key={venue.id} className="flex justify-between items-center">
                     <span>{venue.name}</span>
                     <span>${venue.rent}</span>
@@ -101,7 +101,7 @@ const AddOnSelectionPage = () => {
                   <div key={addOn.vendorId} className="flex justify-between items-center">
                     <span>{addOn.vendorName}</span>
                     <div>
-                      <span className="mr-4">${addOn.rate}</span> {/* Changed from rent to rate */}
+                      <span className="mr-4">${addOn.rate}</span>
                       <button 
                         onClick={() => handleRemoveAddOn(addOn)}
                         className="text-red-500 hover:text-red-700"

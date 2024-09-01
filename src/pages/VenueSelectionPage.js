@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import NavBar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
 
-// Dummy data - replace this with your API call
 const dummyVenues = [
   { id: 1, name: "Grand Ballroom", capacity: 500, location: "Downtown", rent: 5000 },
   { id: 2, name: "Seaside Resort", capacity: 300, location: "Beach Front", rent: 4000 },
@@ -32,6 +32,7 @@ const VenueCard = ({ venue, onSelect }) => (
 const VenueSelectionPage = () => {
   const [selectedVenues, setSelectedVenues] = useState([]);
   const [totalBudget, setTotalBudget] = useState(0);
+  const navigate = useNavigate();
 
   const handleSelectVenue = (venue) => {
     if (!selectedVenues.find(v => v.id === venue.id)) {
@@ -45,6 +46,10 @@ const VenueSelectionPage = () => {
     setTotalBudget(totalBudget - venue.rent);
   };
 
+  const handleNext = () => {
+    navigate('/addons', { state: { selectedVenues } });
+  };
+
   return (
     <div className="flex h-screen bg-gray-100 font-sans">
       <Sidebar />
@@ -52,7 +57,6 @@ const VenueSelectionPage = () => {
         <NavBar />
         <div className="p-6 h-full overflow-auto">
           <div className="flex space-x-6">
-            {/* Main card with venue listings */}
             <div className="flex-grow bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Venues</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -60,9 +64,12 @@ const VenueSelectionPage = () => {
                   <VenueCard key={venue.id} venue={venue} onSelect={handleSelectVenue} />
                 ))}
               </div>
+              <button onClick={handleNext} className="mt-6 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">
+                Next
+              </button>
+n
             </div>
-
-            {/* Selection card */}
+            
             <div className="w-1/3 bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Selected Venues</h2>
               <div className="space-y-4">
@@ -82,10 +89,14 @@ const VenueSelectionPage = () => {
                 <h3 className="text-xl font-semibold">Total Budget</h3>
                 <p className="text-2xl font-bold">${totalBudget}</p>
               </div>
+              
             </div>
+            
           </div>
         </div>
+        
       </div>
+      
     </div>
   );
 };
