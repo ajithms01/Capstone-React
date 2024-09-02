@@ -9,13 +9,15 @@ import AdminDashboard from './pages/AdminDashboard';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import VendorRegistrationPage from './pages/VendorRegistration';
+import LandingPage, { LandinngPageOne } from './pages/LandingPage';
 
 
 const App = () => {
   return (
     <Router>
       <Routes>
-      <Route path="/profile" element={<Profile/>} />
+        <Route path="/" element={<LandingPage/>} />
+        <Route path="/profile" element={<Profile/>} />
         <Route path="/venues" element={<VenueSelectionPage />} />
         <Route path="/addons" element={<AddOnSelectionPage />} />
         <Route path="/approval" element={<ApprovalPage />} />

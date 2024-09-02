@@ -36,17 +36,23 @@ const UserRegistration = () => {
     }
 
     try {
-      // Replace '/api/check-email' with your backend endpoint
-      const response = await axios.post('/api/check-email', { email });
+      const response = await axios.post('/auth/register', {
+        username,
+        email,
+        password
+      });
 
-      if (response.data.exists) {
-        setError('Email already exists');
-      } else {
-        setSuccess('Registration successful');
-        // You can now send the form data to the backend for registration
+      if (response.data) {
+        setSuccess('Registration successful! Please log in.');
+        setFormData({
+          username: '',
+          email: '',
+          password: '',
+          retypePassword: '',
+        });
       }
     } catch (error) {
-      setError('An error occurred. Please try again later.');
+      setError('An error occurred during registration. Please try again later.');
     }
   };
 
