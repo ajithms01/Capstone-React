@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import NavBar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
@@ -31,9 +31,11 @@ const AddOnSelectionPage = () => {
   const [totalBudget, setTotalBudget] = useState(
     selectedVenues.reduce((sum, venue) => sum + venue.rent, 0)
   );
+  const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
   const [location, setLocation] = useState("Midtown"); // Example location
-  const [date, setDate] = useState(new Date()); // Example date
+  const [date, setDate] = useState(new Date('2024-09-15'));
+ // Example date
   const [type, setType] = useState(""); // Optional type, can be set based on user selection
 
   useEffect(() => {
@@ -67,6 +69,11 @@ const AddOnSelectionPage = () => {
     setSelectedAddOns(selectedAddOns.filter(a => a.vendorId !== addOn.vendorId));
     setTotalBudget(totalBudget - addOn.rate);
   };
+
+  const handleNext = () => {
+    navigate('/summary', { state: { selectedVenues, selectedAddOns, totalBudget } });
+  };
+  
 
   return (
     <div className="flex h-screen bg-gray-100 font-sans">
@@ -118,6 +125,17 @@ const AddOnSelectionPage = () => {
               </div>
             </div>
           </div>
+
+          {/* Next button */}
+          <div className="mt-6 flex justify-end">
+            <button 
+              onClick={handleNext} 
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300"
+            >
+              Next
+            </button>
+          </div>
+          <hr className="mt-4 border-gray-300" />
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import VendorRegistrationPage from './pages/VendorRegistration';
+import EventSummaryPage from './pages/EventSummaryPage ';
 
 
 const App = () => {
@@ -23,6 +24,7 @@ const App = () => {
         <Route path="/login" element={<LoginPage/>} />
         <Route path="/admindashboard" element={<AdminDashboard/>} />
         <Route path="/dashboard" element={<Dashboard/>} />
+        <Route path="/summary" element={<EventSummaryPage/>} />
         <Route path="/vendorregistration" element={<VendorRegistrationPage/>} />
       </Routes>
     </Router>

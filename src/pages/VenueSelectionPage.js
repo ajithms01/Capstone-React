@@ -57,18 +57,23 @@ const VenueSelectionPage = () => {
         <NavBar />
         <div className="p-6 h-full overflow-auto">
           <div className="flex space-x-6">
-            <div className="flex-grow bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-2xl font-bold mb-6">Venues</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {dummyVenues.map(venue => (
-                  <VenueCard key={venue.id} venue={venue} onSelect={handleSelectVenue} />
-                ))}
-              </div>
-              <button onClick={handleNext} className="mt-6 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">
+          <div className="flex-grow bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-2xl font-bold mb-6">Venues</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {dummyVenues.map(venue => (
+                <VenueCard key={venue.id} venue={venue} onSelect={handleSelectVenue} />
+              ))}
+            </div>
+            <div className="flex justify-end mt-6">
+              <button 
+                onClick={handleNext} 
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300"
+              >
                 Next
               </button>
-n
             </div>
+            <hr className="mt-4 border-gray-300" />
+          </div>
             
             <div className="w-1/3 bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Selected Venues</h2>
@@ -76,12 +81,7 @@ n
                 {selectedVenues.map(venue => (
                   <div key={venue.id} className="flex justify-between items-center">
                     <span>{venue.name}</span>
-                    <button 
-                      onClick={() => handleRemoveVenue(venue)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      Remove
-                    </button>
+                    
                   </div>
                 ))}
               </div>
