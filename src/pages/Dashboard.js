@@ -7,17 +7,20 @@ import NavBar from '../components/NavBar';
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('events');
   const [events, setEvents] = useState([]);
-  const today = new Date();
+  const [clientId, setClientId] = useState(null); // State to store clientId
   const username = localStorage.getItem('username');
-  // const clientId
+
+  // Fetch clientId based on username
   useEffect(() => {
     const fetchClientId = async () => {
       try {
-        const response = await axios.get(`http://localhost:9598/client/getUser?username=${username}`);
-        // const response = await axios.get(`http://localhost:9598/client/getUser?username=rogue`);
-        const clientId = response.data.id; // Adjust this line based on the actual response structure
-        console.log(clientId);
-        // setClientId(clientId);
+        const response = await axios.get(`http://localhost:9598/client/getUser`, {
+          params: {
+            username: username
+          }
+        });
+        const fetchedClientId = response.data.id; // Adjust this line based on the actual response structure
+        setClientId(fetchedClientId);
       } catch (error) {
         console.error('Error fetching client ID:', error);
       }
@@ -28,44 +31,36 @@ const Dashboard = () => {
     }
   }, [username]);
 
+  // Fetch events based on clientId
   useEffect(() => {
     const fetchEvents = async () => {
-      try {
-
-        const response = await axios.get(`http://localhost:9598/client/events`, {
-          params: {
-            clientId: 1
-          }
-        });
-        console.log('Fetched events:', response.data); // Debugging line
-        setEvents(response.data);
-      } catch (error) {
-        console.error('Error fetching events:', error);
+      if (clientId) {
+        try {
+          const response = await axios.get(`http://localhost:9598/client/events`, {
+            params: {
+              clientId: clientId
+            }
+          });
+          console.log('Fetched events:', response.data); // Debugging line
+          setEvents(response.data);
+        } catch (error) {
+          console.error('Error fetching events:', error);
+        }
       }
     };
 
     fetchEvents();
-  }, []);
-
-  // Function to filter events
-  const getFilteredEvents = () => {
-    const filteredEvents = events.filter(event => {
-      const eventDate = new Date(event.date);
-      return eventDate >= today;
-    });
-    console.log('Filtered events:', filteredEvents); // Debugging line
-    return filteredEvents;
-  };
+  }, [clientId]); // Depend on clientId to refetch events when it changes
 
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <Sidebar/>
+      <Sidebar />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Navbar */}
-        <NavBar/>
+        <NavBar />
 
         {/* Content Area */}
         <div className="flex-1 p-6 overflow-auto">
@@ -73,7 +68,7 @@ const Dashboard = () => {
             <div>
               <h2 className="text-2xl font-semibold mb-4 text-gray-800">Events</h2>
               <div className="space-y-4">
-                {getFilteredEvents().map((event) => (
+                {events.map((event) => (
                   <div key={event.id} className="bg-white p-4 rounded-lg shadow">
                     <h3 className="font-semibold text-lg text-gray-800">{event.name}</h3>
                     <p className="text-gray-600">{event.date} at {event.type}</p>

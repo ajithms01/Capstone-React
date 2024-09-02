@@ -8,7 +8,7 @@ function Sidebar() {
               <a href="#" className="block py-2 px-4 text-lg hover:bg-blue-700 rounded transition duration-300 ease-in-out">Profile</a>
             </li>
             <li>
-              <a href="#" className="block py-2 px-4 text-lg hover:bg-blue-700 rounded transition duration-300 ease-in-out">Create</a>
+              <a href="/create" className="block py-2 px-4 text-lg hover:bg-blue-700 rounded transition duration-300 ease-in-out">Create</a>
             </li>
           </ul>
         </div>
