@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import NavBar from '../components/NavBar';
+import axios from 'axios';
 
 const EventCreationPage = () => {
   const [eventDetails, setEventDetails] = useState({
@@ -13,6 +14,26 @@ const EventCreationPage = () => {
   });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const username = localStorage.getItem('username');
+        const response = await axios.get(`http://localhost:9598/user/getUser`, {
+          params: { username }
+        });
+        const userData = response.data;
+        setEventDetails(prevDetails => ({
+          ...prevDetails,
+          host: userData.name // Set the host field to the user's name
+        }));
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

@@ -14,11 +14,12 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchClientId = async () => {
       try {
-        const response = await axios.get(`http://localhost:9598/client/getUser`, {
+        const response = await axios.get(`http://localhost:9598/user/getUser`, {
           params: {
             username: username
           }
         });
+        console.log(response.data.id)
         const fetchedClientId = response.data.id; // Adjust this line based on the actual response structure
         setClientId(fetchedClientId);
       } catch (error) {
@@ -36,9 +37,9 @@ const Dashboard = () => {
     const fetchEvents = async () => {
       if (clientId) {
         try {
-          const response = await axios.get(`http://localhost:9598/client/events`, {
+          const response = await axios.get(`http://localhost:9598/user/events`, {
             params: {
-              clientId: clientId
+              userId: clientId 
             }
           });
           console.log('Fetched events:', response.data); // Debugging line
@@ -71,7 +72,7 @@ const Dashboard = () => {
                 {events.map((event) => (
                   <div key={event.id} className="bg-white p-4 rounded-lg shadow">
                     <h3 className="font-semibold text-lg text-gray-800">{event.name}</h3>
-                    <p className="text-gray-600">{event.date} at {event.type}</p>
+                    <p className="text-gray-600">{event.type}  on {event.date} </p>
                   </div>
                 ))}
               </div>
