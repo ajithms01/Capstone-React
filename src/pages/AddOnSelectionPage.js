@@ -4,7 +4,6 @@ import axios from 'axios';
 import NavBar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
 
-// Define or import AddOnCard component if it's not defined elsewhere
 const AddOnCard = ({ addOn, onSelect }) => (
   <div className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between">
     <div>
@@ -33,10 +32,9 @@ const AddOnSelectionPage = () => {
   );
   const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
-  const [location, setLocation] = useState("Midtown"); // Example location
+  const [location, setLocation] = useState("Midtown");
   const [date, setDate] = useState(new Date('2024-09-15'));
- // Example date
-  const [type, setType] = useState(""); // Optional type, can be set based on user selection
+  const [type, setType] = useState("");
 
   useEffect(() => {
     const fetchVendors = async () => {
@@ -44,8 +42,8 @@ const AddOnSelectionPage = () => {
         const response = await axios.get('http://localhost:8082/vendor/getVendorByChoice', {
           params: {
             location,
-            date: date.toISOString().split('T')[0], // Format date as yyyy-MM-dd
-            type: type || undefined, // Send type only if it's set
+            date: date.toISOString().split('T')[0],
+            type: type || undefined,
           },
         });
         setVendors(response.data);
@@ -73,16 +71,14 @@ const AddOnSelectionPage = () => {
   const handleNext = () => {
     navigate('/summary', { state: { selectedVenues, selectedAddOns, totalBudget } });
   };
-  
 
   return (
     <div className="flex h-screen bg-gray-100 font-sans">
       <Sidebar />
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 flex flex-col">
         <NavBar />
-        <div className="p-6 h-full overflow-auto">
+        <div className="flex-1 p-6 overflow-auto">
           <div className="flex space-x-6">
-            {/* Main card with add-on listings */}
             <div className="flex-grow bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Add-Ons</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -92,7 +88,6 @@ const AddOnSelectionPage = () => {
               </div>
             </div>
 
-            {/* Selection card */}
             <div className="w-1/3 bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Selected Items</h2>
               <div className="space-y-4">
@@ -125,17 +120,17 @@ const AddOnSelectionPage = () => {
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Next button */}
-          <div className="mt-6 flex justify-end">
-            <button 
-              onClick={handleNext} 
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300"
-            >
-              Next
-            </button>
-          </div>
-          <hr className="mt-4 border-gray-300" />
+        {/* Integrated Next button */}
+        <div className="bg-white p-6 border-t flex justify-end">
+          <button 
+            onClick={handleNext} 
+            className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300 ease-in-out"
+            style={{ minWidth: '150px' }}
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

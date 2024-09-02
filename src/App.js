@@ -10,6 +10,8 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import VendorRegistrationPage from './pages/VendorRegistration';
 import EventSummaryPage from './pages/EventSummaryPage ';
+import UserProfile from './UserProfile';
+import EventCreationPage from './pages/EventCreation';
 
 
 const App = () => {
@@ -17,6 +19,9 @@ const App = () => {
     <Router>
       <Routes>
       <Route path="/profile" element={<Profile/>} />
+      <Route path="/profile1" element={<UserProfile />} />
+        <Route path="/login" element={<LoginPage/>} />
+        <Route path='/create' element={<EventCreationPage/>} />
         <Route path="/venues" element={<VenueSelectionPage />} />
         <Route path="/addons" element={<AddOnSelectionPage />} />
         <Route path="/approval" element={<ApprovalPage />} />
