@@ -1,22 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import NavBar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
-
-// Dummy data for add-ons - replace this with your API call
-const dummyAddOns = [
-  { id: 1, type: "Photography", vendorName: "SnapPro", vendorLocation: "Downtown", vendorPhone: "123-456-7890", rent: 1000 },
-  { id: 2, type: "Light and Sound", vendorName: "BrightBeats", vendorLocation: "Midtown", vendorPhone: "234-567-8901", rent: 1500 },
-  { id: 3, type: "Decoration", vendorName: "ElegantDecor", vendorLocation: "Uptown", vendorPhone: "345-678-9012", rent: 800 },
-  { id: 4, type: "Photography", vendorName: "MemoryMakers", vendorLocation: "Suburb", vendorPhone: "456-789-0123", rent: 1200 },
-  { id: 5, type: "Light and Sound", vendorName: "SoundWave", vendorLocation: "City Center", vendorPhone: "567-890-1234", rent: 1300 },
-  { id: 6, type: "Decoration", vendorName: "FestiveFlair", vendorLocation: "Historic District", vendorPhone: "678-901-2345", rent: 900 },
-];
-
-// Dummy data for selected venues - replace this with actual data from your state management
-const dummySelectedVenues = [
-  { id: 1, name: "Grand Ballroom", rent: 5000 },
-  { id: 2, name: "Seaside Resort", rent: 4000 },
-];
 
 const AddOnCard = ({ addOn, onSelect }) => (
   <div className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between">
@@ -25,7 +11,7 @@ const AddOnCard = ({ addOn, onSelect }) => (
       <p>Vendor: {addOn.vendorName}</p>
       <p>Location: {addOn.vendorLocation}</p>
       <p>Phone: {addOn.vendorPhone}</p>
-      <p>Rent: ${addOn.rent}</p>
+      <p>Rate: ${addOn.rate}</p>
     </div>
     <button 
       onClick={() => onSelect(addOn)}
@@ -37,46 +23,76 @@ const AddOnCard = ({ addOn, onSelect }) => (
 );
 
 const AddOnSelectionPage = () => {
+  const locationData = useLocation();
+  const { selectedVenues } = locationData.state || { selectedVenues: [] };
+  
   const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [totalBudget, setTotalBudget] = useState(
-    dummySelectedVenues.reduce((sum, venue) => sum + venue.rent, 0)
+    selectedVenues.reduce((sum, venue) => sum + venue.rent, 0)
   );
+  const navigate = useNavigate();
+  const [vendors, setVendors] = useState([]);
+  const [location, setLocation] = useState("Midtown");
+  const [date, setDate] = useState(new Date('2024-09-15'));
+  const [type, setType] = useState("");
+
+  useEffect(() => {
+    const fetchVendors = async () => {
+      try {
+        const response = await axios.get('http://localhost:8082/vendor/getVendorByChoice', {
+          params: {
+            location,
+            date: date.toISOString().split('T')[0],
+            type: type || undefined,
+          },
+        });
+        setVendors(response.data);
+      } catch (error) {
+        console.error('Error fetching vendors:', error);
+        alert('Failed to fetch vendors. Please try again later.');
+      }
+    };
+
+    fetchVendors();
+  }, [location, date, type]);
 
   const handleSelectAddOn = (addOn) => {
-    if (!selectedAddOns.find(a => a.id === addOn.id)) {
+    if (!selectedAddOns.find(a => a.vendorId === addOn.vendorId)) {
       setSelectedAddOns([...selectedAddOns, addOn]);
-      setTotalBudget(totalBudget + addOn.rent);
+      setTotalBudget(totalBudget + addOn.rate);
     }
   };
 
   const handleRemoveAddOn = (addOn) => {
-    setSelectedAddOns(selectedAddOns.filter(a => a.id !== addOn.id));
-    setTotalBudget(totalBudget - addOn.rent);
+    setSelectedAddOns(selectedAddOns.filter(a => a.vendorId !== addOn.vendorId));
+    setTotalBudget(totalBudget - addOn.rate);
+  };
+
+  const handleNext = () => {
+    navigate('/summary', { state: { selectedVenues, selectedAddOns, totalBudget } });
   };
 
   return (
     <div className="flex h-screen bg-gray-100 font-sans">
       <Sidebar />
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 flex flex-col">
         <NavBar />
-        <div className="p-6 h-full overflow-auto">
+        <div className="flex-1 p-6 overflow-auto">
           <div className="flex space-x-6">
-            {/* Main card with add-on listings */}
             <div className="flex-grow bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Add-Ons</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {dummyAddOns.map(addOn => (
-                  <AddOnCard key={addOn.id} addOn={addOn} onSelect={handleSelectAddOn} />
+                {vendors.map(addOn => (
+                  <AddOnCard key={addOn.vendorId} addOn={addOn} onSelect={handleSelectAddOn} />
                 ))}
               </div>
             </div>
 
-            {/* Selection card */}
             <div className="w-1/3 bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Selected Items</h2>
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold">Venues</h3>
-                {dummySelectedVenues.map(venue => (
+                {selectedVenues.map(venue => (
                   <div key={venue.id} className="flex justify-between items-center">
                     <span>{venue.name}</span>
                     <span>${venue.rent}</span>
@@ -84,10 +100,10 @@ const AddOnSelectionPage = () => {
                 ))}
                 <h3 className="text-xl font-semibold mt-6">Add-Ons</h3>
                 {selectedAddOns.map(addOn => (
-                  <div key={addOn.id} className="flex justify-between items-center">
-                    <span>{addOn.type} - {addOn.vendorName}</span>
+                  <div key={addOn.vendorId} className="flex justify-between items-center">
+                    <span>{addOn.vendorName}</span>
                     <div>
-                      <span className="mr-4">${addOn.rent}</span>
+                      <span className="mr-4">${addOn.rate}</span>
                       <button 
                         onClick={() => handleRemoveAddOn(addOn)}
                         className="text-red-500 hover:text-red-700"
@@ -104,6 +120,17 @@ const AddOnSelectionPage = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Integrated Next button */}
+        <div className="bg-white p-6 border-t flex justify-end">
+          <button 
+            onClick={handleNext} 
+            className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300 ease-in-out"
+            style={{ minWidth: '150px' }}
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

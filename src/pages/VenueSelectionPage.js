@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import NavBar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
 
-// Dummy data - replace this with your API call
 const dummyVenues = [
-  { id: 1, name: "Grand Ballroom", capacity: 500, location: "Downtown", rent: 5000 },
+  { id: 1, name: "Grand Ballroom", capacity: 500, location: "Midtown", rent: 5000 },
   { id: 2, name: "Seaside Resort", capacity: 300, location: "Beach Front", rent: 4000 },
   { id: 3, name: "Mountain Retreat", capacity: 200, location: "Highlands", rent: 3000 },
   { id: 4, name: "City View Hall", capacity: 400, location: "City Center", rent: 4500 },
@@ -32,6 +32,18 @@ const VenueCard = ({ venue, onSelect }) => (
 const VenueSelectionPage = () => {
   const [selectedVenues, setSelectedVenues] = useState([]);
   const [totalBudget, setTotalBudget] = useState(0);
+  const [filteredVenues, setFilteredVenues] = useState([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  const eventDetails = location.state?.eventDetails || {};
+  const eventLocation = eventDetails.eventLocation?.trim().toLowerCase() || "";
+
+  useEffect(() => {
+    console.log('Received event details:', eventDetails);
+    const filtered = dummyVenues.filter(venue => venue.location.toLowerCase() === eventLocation);
+    setFilteredVenues(filtered);
+  }, [eventLocation, eventDetails]);
 
   const handleSelectVenue = (venue) => {
     if (!selectedVenues.find(v => v.id === venue.id)) {
@@ -45,6 +57,10 @@ const VenueSelectionPage = () => {
     setTotalBudget(totalBudget - venue.rent);
   };
 
+  const handleNext = () => {
+    navigate('/addons', { state: { selectedVenues, eventDetails } });
+  };
+
   return (
     <div className="flex h-screen bg-gray-100 font-sans">
       <Sidebar />
@@ -52,26 +68,37 @@ const VenueSelectionPage = () => {
         <NavBar />
         <div className="p-6 h-full overflow-auto">
           <div className="flex space-x-6">
-            {/* Main card with venue listings */}
             <div className="flex-grow bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Venues</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {dummyVenues.map(venue => (
-                  <VenueCard key={venue.id} venue={venue} onSelect={handleSelectVenue} />
-                ))}
+                {filteredVenues.length > 0 ? (
+                  filteredVenues.map(venue => (
+                    <VenueCard key={venue.id} venue={venue} onSelect={handleSelectVenue} />
+                  ))
+                ) : (
+                  <p>No venues available in this location.</p>
+                )}
               </div>
+              <div className="flex justify-end mt-6">
+                <button 
+                  onClick={handleNext} 
+                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300"
+                >
+                  Next
+                </button>
+              </div>
+              <hr className="mt-4 border-gray-300" />
             </div>
-
-            {/* Selection card */}
+            
             <div className="w-1/3 bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Selected Venues</h2>
               <div className="space-y-4">
                 {selectedVenues.map(venue => (
                   <div key={venue.id} className="flex justify-between items-center">
                     <span>{venue.name}</span>
-                    <button 
+                    <button
                       onClick={() => handleRemoveVenue(venue)}
-                      className="text-red-500 hover:text-red-700"
+                      className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition duration-300"
                     >
                       Remove
                     </button>
