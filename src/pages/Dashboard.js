@@ -8,11 +8,35 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('events');
   const [events, setEvents] = useState([]);
   const today = new Date();
+  const username = localStorage.getItem('username');
+  // const clientId
+  useEffect(() => {
+    const fetchClientId = async () => {
+      try {
+        const response = await axios.get(`http://localhost:9598/client/getUser?username=${username}`);
+        // const response = await axios.get(`http://localhost:9598/client/getUser?username=rogue`);
+        const clientId = response.data.id; // Adjust this line based on the actual response structure
+        console.log(clientId);
+        // setClientId(clientId);
+      } catch (error) {
+        console.error('Error fetching client ID:', error);
+      }
+    };
+
+    if (username) {
+      fetchClientId();
+    }
+  }, [username]);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get('http://localhost:8082/client/events?clientId=1');
+
+        const response = await axios.get(`http://localhost:9598/client/events`, {
+          params: {
+            clientId: 1
+          }
+        });
         console.log('Fetched events:', response.data); // Debugging line
         setEvents(response.data);
       } catch (error) {
