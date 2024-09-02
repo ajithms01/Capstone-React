@@ -9,28 +9,21 @@ import AdminDashboard from './pages/AdminDashboard';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import VendorRegistrationPage from './pages/VendorRegistration';
-<<<<<<< HEAD
-import LandingPage, { LandinngPageOne } from './pages/LandingPage';
-=======
 import EventSummaryPage from './pages/EventSummaryPage ';
 import UserProfile from './UserProfile';
 import EventCreationPage from './pages/EventCreation';
->>>>>>> 6e5cf17e93fa5deac96f2569025f83865dd8523c
+import LandingPage from './pages/LandingPage';
 
 
 const App = () => {
   return (
     <Router>
       <Routes>
-<<<<<<< HEAD
-        <Route path="/" element={<LandingPage/>} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/profile" element={<Profile/>} />
-=======
-      <Route path="/profile" element={<Profile/>} />
       <Route path="/profile1" element={<UserProfile />} />
         <Route path="/login" element={<LoginPage/>} />
         <Route path='/create' element={<EventCreationPage/>} />
->>>>>>> 6e5cf17e93fa5deac96f2569025f83865dd8523c
         <Route path="/venues" element={<VenueSelectionPage />} />
         <Route path="/addons" element={<AddOnSelectionPage />} />
         <Route path="/approval" element={<ApprovalPage />} />

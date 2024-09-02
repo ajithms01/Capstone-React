@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const LandingPage = () => {
   const [currentImage, setCurrentImage] = useState(0);
@@ -30,8 +31,8 @@ const LandingPage = () => {
             <a href="#" className="text-white">Contact Us</a>
           </div>
           <div className="space-x-4">
-            <button className="bg-white text-blue-600 px-4 py-2 rounded">Login</button>
-            <button className="bg-white text-blue-600 px-4 py-2 rounded">Register</button>
+            <Link to="/login" className="bg-white text-blue-600 px-4 py-2 rounded">Login</Link>
+            <Link to="/register" className="bg-white text-blue-600 px-4 py-2 rounded">Register</Link>
           </div>
         </div>
       </nav>
