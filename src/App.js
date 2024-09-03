@@ -13,7 +13,7 @@ import EventSummaryPage from './pages/EventSummaryPage ';
 import UserProfile from './UserProfile';
 import EventCreationPage from './pages/EventCreation';
 import LandinngPageOne  from './pages/LandingPage';
-
+import EventDetailsPage from './pages/EventDetailsPage';
 
 const App = () => {
   return (

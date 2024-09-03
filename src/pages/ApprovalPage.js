@@ -9,7 +9,7 @@ function ApprovalPage() {
   useEffect(() => {
     const fetchVendors = async () => {
       try {
-        const response = await axios.get('http://localhost:9598/vendors/status?status=PENDING');
+        const response = await axios.get('http://localhost:9598/vendor/status?status=PENDING');
         setVendors(response.data);
       } catch (error) {
         console.error('Error fetching vendors:', error);
@@ -22,10 +22,17 @@ function ApprovalPage() {
 
   const handleApproval = async (vendorId, approved) => {
     try {
-      await axios.post(`http://localhost:9598/api/vendors/${vendorId}/approve`, { approved });
-      setVendors(vendors.map(vendor =>
-        vendor.vendorId === vendorId ? { ...vendor, status: approved ? "approved" : "rejected" } : vendor
-      ));
+      if (approved) {
+        // Approve the vendor
+        await axios.put(`http://localhost:9598/vendor/approveVendor/${vendorId}`);
+        setVendors(vendors.map(vendor =>
+          vendor.vendorId === vendorId ? { ...vendor, status: "approved" } : vendor
+        ));
+      } else {
+        // Remove the vendor
+        await axios.delete(`http://localhost:9598/vendor/${vendorId}`);
+        setVendors(vendors.filter(vendor => vendor.vendorId !== vendorId));
+      }
     } catch (error) {
       console.error('Error updating vendor status:', error);
       // Handle the error appropriately
