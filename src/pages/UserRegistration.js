@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const UserRegistration = () => {
   const [formData, setFormData] = useState({
@@ -7,10 +8,12 @@ const UserRegistration = () => {
     email: '',
     password: '',
     retypePassword: '',
+    name: '',  // Added name field
   });
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,7 +26,7 @@ const UserRegistration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { username, email, password, retypePassword } = formData;
+    const { username, email, password, retypePassword, name } = formData;
 
     if (password !== retypePassword) {
       setError('Passwords do not match');
@@ -36,20 +39,20 @@ const UserRegistration = () => {
     }
 
     try {
-      const response = await axios.post('/auth/register', {
+      const response = await axios.post('http://localhost:9598/auth/register', {
         username,
         email,
-        password
+        password,
+        name  // Include name in the request
       });
 
       if (response.data) {
-        setSuccess('Registration successful! Please log in.');
-        setFormData({
-          username: '',
-          email: '',
-          password: '',
-          retypePassword: '',
-        });
+        alert('Registration successful!');
+        // Store the token if necessary
+        localStorage.setItem('token', response.data);
+
+        // Redirect to the landing page
+        navigate('/');
       }
     } catch (error) {
       setError('An error occurred during registration. Please try again later.');
@@ -107,6 +110,18 @@ const UserRegistration = () => {
               name="retypePassword"
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
               value={formData.retypePassword}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="name">Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+              value={formData.name}
               onChange={handleChange}
               required
             />

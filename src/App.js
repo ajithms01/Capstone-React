@@ -12,14 +12,14 @@ import VendorRegistrationPage from './pages/VendorRegistration';
 import EventSummaryPage from './pages/EventSummaryPage ';
 import UserProfile from './UserProfile';
 import EventCreationPage from './pages/EventCreation';
-import LandingPage from './pages/LandingPage';
+import LandinngPageOne  from './pages/landingpage';
 
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<LandinngPageOne />} />
         <Route path="/profile" element={<Profile/>} />
       <Route path="/profile1" element={<UserProfile />} />
         <Route path="/login" element={<LoginPage/>} />
