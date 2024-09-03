@@ -13,6 +13,7 @@ import EventSummaryPage from './pages/EventSummaryPage ';
 import UserProfile from './UserProfile';
 import EventCreationPage from './pages/EventCreation';
 import LandinngPageOne  from './pages/landingpage';
+import EventDetailsPage from './pages/EventDetailsPage';
 
 
 const App = () => {
@@ -21,7 +22,6 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LandinngPageOne />} />
         <Route path="/profile" element={<Profile/>} />
-      <Route path="/profile1" element={<UserProfile />} />
         <Route path="/login" element={<LoginPage/>} />
         <Route path='/create' element={<EventCreationPage/>} />
         <Route path="/venues" element={<VenueSelectionPage />} />
@@ -33,6 +33,9 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard/>} />
         <Route path="/summary" element={<EventSummaryPage/>} />
         <Route path="/vendorregistration" element={<VendorRegistrationPage/>} />
+        <Route path="/details" element={<EventDetailsPage/>} />
+
+
       </Routes>
     </Router>
   );

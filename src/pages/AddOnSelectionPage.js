@@ -73,13 +73,13 @@ const AddOnSelectionPage = () => {
     </div>
   );
   return (
-    <div className="flex h-screen bg-gray-100 font-sans">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <NavBar />
+    <div className="flex flex-col h-screen bg-gray-100">
+      <NavBar />
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar />
         <div className="flex-1 p-6 overflow-auto">
           <div className="flex space-x-6">
-            <div className="flex-grow bg-white rounded-lg shadow-lg p-6">
+            <div className="flex-grow bg-white rounded-lg shadow-lg p-6 ">
               <h2 className="text-2xl font-bold mb-6">Add-Ons</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {vendors.map(addOn => (

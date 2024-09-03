@@ -67,14 +67,10 @@ const EventSummaryPage = () => {
   };
 
   return (
-    <div className="flex h-full bg-gray-100 font-sans">
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main content */}
-      <div className="flex-1 flex flex-col">
-        {/* Navbar */}
-        <NavBar />
+    <div className="flex flex-col h-screen bg-gray-100">
+      <NavBar />
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar />
 
         {/* Event Summary */}
         <div className="p-10 max-w-3xl mx-auto">

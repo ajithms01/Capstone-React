@@ -38,14 +38,10 @@ const Profile = () => {
   }, []);
 
   return (
-    <div className="flex h-full bg-gray-100 font-sans">
-      {/* Sidebar */}
+    <div className="flex flex-col h-screen bg-gray-100">
+    <NavBar />
+    <div className="flex flex-1 overflow-hidden">
       <Sidebar />
-
-      {/* Main content */}
-      <div className="flex-1">
-        {/* Navbar */}
-        <NavBar />
 
         {/* User Details Display */}
         <div className="p-10 max-w-3xl mx-auto h-screen">
