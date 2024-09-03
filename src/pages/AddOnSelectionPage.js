@@ -4,27 +4,9 @@ import axios from 'axios';
 import NavBar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
 
-const AddOnCard = ({ addOn, onSelect }) => (
-  <div className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between">
-    <div>
-      <h3 className="text-xl font-semibold mb-2">{addOn.type}</h3>
-      <p>Vendor: {addOn.vendorName}</p>
-      <p>Location: {addOn.vendorLocation}</p>
-      <p>Phone: {addOn.vendorPhone}</p>
-      <p>Rate: ${addOn.rate}</p>
-    </div>
-    <button 
-      onClick={() => onSelect(addOn)}
-      className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
-    >
-      Select Add-On
-    </button>
-  </div>
-);
-
 const AddOnSelectionPage = () => {
   const locationData = useLocation();
-  const { selectedVenues } = locationData.state || { selectedVenues: [] };
+  const { selectedVenues, eventDetails } = locationData.state || { selectedVenues: [], eventDetails: {} };
   
   const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [totalBudget, setTotalBudget] = useState(
@@ -32,9 +14,9 @@ const AddOnSelectionPage = () => {
   );
   const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
-  const [location, setLocation] = useState("Midtown");
-  const [date, setDate] = useState(new Date('2024-09-15'));
-  const [type, setType] = useState("");
+  const [location, setLocation] = useState(eventDetails.eventLocation); // Set the initial location
+  const [date, setDate] = useState(eventDetails.eventDate ? new Date(eventDetails.eventDate) : new Date('2024-09-15')); // Set the initial date
+  const [type, setType] = useState(eventDetails.eventType || "");
 
   useEffect(() => {
     const fetchVendors = async () => {
@@ -69,9 +51,27 @@ const AddOnSelectionPage = () => {
   };
 
   const handleNext = () => {
-    navigate('/summary', { state: { selectedVenues, selectedAddOns, totalBudget } });
+    navigate('/summary', { state: {eventDetails, selectedVenues, selectedAddOns, totalBudget} });
+    console.log(eventDetails, selectedVenues, selectedAddOns, totalBudget);
   };
 
+  const AddOnCard = ({ addOn, onSelect }) => (
+    <div className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between">
+      <div>
+        <h3 className="text-xl font-semibold mb-2">{addOn.type}</h3>
+        <p>Vendor: {addOn.vendorName}</p>
+        <p>Location: {addOn.vendorLocation}</p>
+        <p>Phone: {addOn.vendorPhone}</p>
+        <p>Rate: ${addOn.rate}</p>
+      </div>
+      <button 
+        onClick={() => onSelect(addOn)}
+        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+      >
+        Select Add-On
+      </button>
+    </div>
+  );
   return (
     <div className="flex h-screen bg-gray-100 font-sans">
       <Sidebar />
