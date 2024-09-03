@@ -58,7 +58,7 @@ const VenueSelectionPage = () => {
   };
 
   const handleNext = () => {
-    navigate('/addons', { state: { selectedVenues, eventDetails } });
+    navigate('/addons', { state: { eventDetails,selectedVenues} });
   };
 
   return (
