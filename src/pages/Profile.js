@@ -1,33 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import NavBar from '../components/NavBar';
-import axios from 'axios'; // You'll need this for making API calls
+import axios from 'axios'; // For making API calls
 
 const Profile = () => {
   const [userDetails, setUserDetails] = useState({
     username: '',
-    phoneNumber: '',
     email: '',
+    name: '',
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserDetails((prev) => ({ ...prev, [name]: value }));
-  };
+  useEffect(() => {
+    // Get the username from local storage
+    const storedUsername = localStorage.getItem('username');
 
-  const handleSave = (e) => {
-    e.preventDefault();
-    // Here you'd typically send the data to the server
-    axios.post('/api/user-details', userDetails)
-      .then(response => {
-        console.log('User details saved:', response.data);
-        alert('User details saved successfully!');
-      })
-      .catch(error => {
-        console.error('There was an error saving the user details!', error);
-        alert('Failed to save user details.');
-      });
-  };
+    if (storedUsername) {
+      // Fetch user details from the backend
+      axios.get(`http://localhost:9598/user/getUser?username=${storedUsername}`)
+        .then(response => {
+          if (response.data) {
+            setUserDetails({
+              username: response.data.username,
+              email: response.data.email,
+              name: response.data.name,
+            });
+          } else {
+            alert('User not found');
+          }
+        })
+        .catch(error => {
+          console.error('There was an error fetching the user details!', error);
+          alert('Failed to fetch user details.');
+        });
+    } else {
+      alert('No username found in local storage');
+    }
+  }, []);
 
   return (
     <div className="flex h-full bg-gray-100 font-sans">
@@ -39,54 +47,24 @@ const Profile = () => {
         {/* Navbar */}
         <NavBar />
 
-        {/* User Details Form */}
-        <div className="p-10 max-w-3xl mx-auto">
+        {/* User Details Display */}
+        <div className="p-10 max-w-3xl mx-auto h-screen">
           <div className="bg-white rounded-lg shadow-lg p-8">
-            <h2 className="text-3xl font-bold mb-8 text-gray-800">User Details</h2>
-            <form onSubmit={handleSave} className="space-y-6">
+            <h2 className="text-3xl font-bold mb-8 text-gray-800">User Profile</h2>
+            <div className="space-y-6">
               <div>
-                <label htmlFor="username" className="block mb-2 text-lg font-medium text-gray-700">Name</label>
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  value={userDetails.username}
-                  onChange={handleInputChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out"
-                  required
-                />
+                <label className="block mb-2 text-lg font-medium text-gray-700">Username</label>
+                <p className="text-xl text-gray-800">{userDetails.username}</p>
               </div>
               <div>
-                <label htmlFor="phoneNumber" className="block mb-2 text-lg font-medium text-gray-700">Phone Number</label>
-                <input
-                  type="text"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  value={userDetails.phoneNumber}
-                  onChange={handleInputChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out"
-                  required
-                />
+                <label className="block mb-2 text-lg font-medium text-gray-700">Name</label>
+                <p className="text-xl text-gray-800">{userDetails.name}</p>
               </div>
               <div>
-                <label htmlFor="email" className="block mb-2 text-lg font-medium text-gray-700">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={userDetails.email}
-                  onChange={handleInputChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out"
-                  required
-                />
+                <label className="block mb-2 text-lg font-medium text-gray-700">Email</label>
+                <p className="text-xl text-gray-800">{userDetails.email}</p>
               </div>
-              <button
-                type="submit"
-                className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transform hover:scale-105 transition duration-300 ease-in-out"
-              >
-                Save
-              </button>
-            </form>
+            </div>
           </div>
         </div>
       </div>

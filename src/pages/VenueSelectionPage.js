@@ -38,6 +38,8 @@ const VenueSelectionPage = () => {
   
   const eventDetails = location.state?.eventDetails || {};
   const eventLocation = eventDetails.eventLocation?.trim().toLowerCase() || "";
+  const eventDate = eventDetails.date || "";
+
 
   useEffect(() => {
     console.log('Received event details:', eventDetails);

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import NavBar from '../components/NavBar';
 
@@ -9,8 +10,10 @@ const VendorRegistrationPage = () => {
     vendorPhone: '',
     vendorLocation: '',
     type: '',
-    provides: '',
+    rate: '',
+    provides: [],
   });
+
   const handleProvidesChange = (e) => {
     const { options } = e.target;
     const selected = [];
@@ -24,7 +27,7 @@ const VendorRegistrationPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setVendorDetails(prev => ({ ...prev, [name]: value }));
+    setVendorDetails((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -32,24 +35,18 @@ const VendorRegistrationPage = () => {
     console.log('Vendor details submitted:', vendorDetails);
 
     try {
-      const response = await fetch('/api/vendors', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(vendorDetails),
-      });
+      const response = await axios.post('http://localhost:9598/vendor/information', vendorDetails);
 
-      if (response.ok) {
+      if (response.status === 200) {
         alert('Vendor registered successfully');
-        // Optionally reset form fields after successful submission
         setVendorDetails({
           vendorName: '',
           vendorEmail: '',
           vendorPhone: '',
           vendorLocation: '',
           type: '',
-          provides: '',
+          rate: '',
+          provides: [],
         });
       } else {
         alert('Failed to register vendor');
@@ -63,12 +60,12 @@ const VendorRegistrationPage = () => {
   return (
     <div className="flex h-full bg-gray-100 font-sans">
       {/* Sidebar */}
-      <Sidebar/>
+      <Sidebar />
 
       {/* Main content */}
       <div className="flex-1">
         {/* Navbar */}
-        <NavBar/>
+        <NavBar />
 
         {/* Vendor Registration Form */}
         <div className="p-10 max-w-3xl mx-auto">
@@ -141,23 +138,18 @@ const VendorRegistrationPage = () => {
                   <option value="venue">Venue</option>
                 </select>
               </div>
-              {/* <div>
-                <label htmlFor="provides" className="block mb-2 text-lg font-medium text-gray-700">Services Provided</label>
-                <select
-                  id="provides"
-                  name="provides"
-                  multiple
-                  value={vendorDetails.provides}
-                  onChange={handleProvidesChange}
+              <div>
+                <label htmlFor="rate" className="block mb-2 text-lg font-medium text-gray-700">Rate</label>
+                <input
+                  type="number"
+                  id="rate"
+                  name="rate"
+                  value={vendorDetails.rate}
+                  onChange={handleInputChange}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out"
-                >
-                  <option value="photography">Photography</option>
-                  <option value="catering">Catering</option>
-                  <option value="dj">DJ Services</option>
-                  <option value="decoration">Decoration</option>
-                  <option value="venue_rental">Venue Rental</option>
-                </select>
-              </div> */}
+                  required
+                />
+              </div>
               <button
                 type="submit"
                 className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transform hover:scale-105 transition duration-300 ease-in-out"
