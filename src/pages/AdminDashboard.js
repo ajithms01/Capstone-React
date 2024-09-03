@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay } from 'date-fns';
 
@@ -9,14 +9,16 @@ function AdminDashboard() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState({});
+  const [isOverflow, setIsOverflow] = useState(false);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     const fetchEvents = async () => {
       if (!selectedDate) return;
-  
+
       try {
         const selectedDay = format(selectedDate, 'yyyy-MM-dd'); // Format the selected date
-        const response = await axios.get(`http://localhost:8081/api/event/eventDate`, {
+        const response = await axios.get(`http://localhost:9598/api/event/eventDate`, {
           params: { date: selectedDay }
         });
         console.log('Fetched events:', response.data);
@@ -26,10 +28,24 @@ function AdminDashboard() {
         alert('Failed to fetch events. Please try again later.');
       }
     };
-  
+
     fetchEvents();
   }, [selectedDate]); // Re-fetch events when selectedDate changes
-  
+
+  useEffect(() => {
+    // Check if the container overflows
+    const checkOverflow = () => {
+      if (containerRef.current) {
+        const { scrollWidth, clientWidth } = containerRef.current;
+        setIsOverflow(scrollWidth > clientWidth);
+      }
+    };
+
+    checkOverflow(); // Check overflow on render and when events change
+    window.addEventListener('resize', checkOverflow); // Re-check on window resize
+
+    return () => window.removeEventListener('resize', checkOverflow); // Cleanup listener
+  }, [events]);
 
   const renderHeader = () => {
     return (
@@ -40,7 +56,7 @@ function AdminDashboard() {
       </div>
     );
   };
-  
+
   const renderDays = () => {
     const days = [];
     const startDate = startOfWeek(currentMonth);
@@ -53,7 +69,7 @@ function AdminDashboard() {
     }
     return <div className="grid grid-cols-7 gap-1">{days}</div>; {/* Reduced grid gap */}
   };
-  
+
   const renderCells = () => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(monthStart);
@@ -62,7 +78,7 @@ function AdminDashboard() {
     const rows = [];
     let days = [];
     let day = startDate;
-  
+
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
         const formattedDate = format(day, 'd');
@@ -89,7 +105,6 @@ function AdminDashboard() {
     }
     return <div>{rows}</div>;
   };
-  
 
   const onDateClick = (day) => {
     setSelectedDate(day);
@@ -103,20 +118,53 @@ function AdminDashboard() {
     setCurrentMonth(subMonths(currentMonth, 1));
   };
 
+  const scrollContainer = (direction) => {
+    if (containerRef.current) {
+      containerRef.current.scrollBy({
+        left: direction * 250, // Adjust scroll distance as needed
+        behavior: 'smooth'
+      });
+    }
+  };
+
   const renderEvents = () => {
     const selectedDay = format(selectedDate, 'yyyy-MM-dd'); // Adjust according to your event data format
+
     return (
-      <div className="mt-4 p-4 bg-gray-200 rounded">
-        <h4 className="font-semibold">Events on {selectedDay}:</h4>
-        <ul>
-          {events[selectedDay] ? (
+      <div className="mt-4 p-4 bg-gray-50 rounded-lg shadow-md relative">
+        <h4 className="text-lg font-semibold mb-2">Events on {selectedDay}:</h4>
+        <div
+          ref={containerRef}
+          className="flex overflow-x-auto space-x-4 pb-4"
+        >
+          {events[selectedDay] && events[selectedDay].length > 0 ? (
             events[selectedDay].map((event, index) => (
-              <li key={index}>{event.name} : {event.host}</li>
+              <div key={index} className="flex-shrink-0 w-60 p-2 bg-white rounded-lg shadow-sm border border-gray-200">
+                <h5 className="text-md font-semibold text-gray-800 truncate">{event.name}</h5>
+                <p className="text-sm text-gray-600">Time: {event.time || 'Not specified'}</p>
+                <p className="text-sm text-gray-600">Location: {event.location || 'Not specified'}</p>
+              </div>
             ))
           ) : (
-            <li>No events</li>
+            <div className="text-gray-500">No events scheduled for this day.</div>
           )}
-        </ul>
+        </div>
+        {isOverflow && (
+          <>
+            <button
+              onClick={() => scrollContainer(-1)}
+              className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-200 p-2 rounded-full shadow-md"
+            >
+              &lt;
+            </button>
+            <button
+              onClick={() => scrollContainer(1)}
+              className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-200 p-2 rounded-full shadow-md"
+            >
+              &gt;
+            </button>
+          </>
+        )}
       </div>
     );
   };

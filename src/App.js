@@ -12,8 +12,7 @@ import VendorRegistrationPage from './pages/VendorRegistration';
 import EventSummaryPage from './pages/EventSummaryPage ';
 import UserProfile from './UserProfile';
 import EventCreationPage from './pages/EventCreation';
-import LandinngPageOne  from './pages/landingpage';
-import EventDetailsPage from './pages/EventDetailsPage';
+import LandinngPageOne  from './pages/LandingPage';
 
 
 const App = () => {
@@ -26,6 +25,7 @@ const App = () => {
         <Route path='/create' element={<EventCreationPage/>} />
         <Route path="/venues" element={<VenueSelectionPage />} />
         <Route path="/addons" element={<AddOnSelectionPage />} />
+    
         <Route path="/approval" element={<ApprovalPage />} />
         <Route path="/register" element={<UserRegistration />} />
         <Route path="/login" element={<LoginPage/>} />
