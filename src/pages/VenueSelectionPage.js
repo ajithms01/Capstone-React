@@ -28,32 +28,46 @@ const VenueSelectionPage = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
-  
-  const eventDetails = location.state?.eventDetails || {};
 
+  const eventDetails = location.state?.eventDetails || {};
+  const [date, setDate] = useState(eventDetails.eventDate ? new Date(eventDetails.eventDate) : new Date());
+  const locationValue = eventDetails.eventLocation || 'Maharashtra'; // Default location if not available
+console.log(eventDetails);
   useEffect(() => {
     const fetchVenues = async () => {
       try {
-        const response = await axios.get('http://localhost:9598/venue/getByLocation?date=2024-09-03&location=Maharashtra');
-        const venues = response.data;
+        const formattedDate = date.toISOString().split('T')[0];
+        const response = await axios.get('http://localhost:9598/venue/getByLocation', {
+          params: {
+            date: formattedDate,
+            location: locationValue,
+          }
+        });
 
-        // Shuffle venues and select 4 random venues
-        const getRandomVenues = (venues, num) => {
-          const shuffled = [...venues].sort(() => 0.5 - Math.random());
-          return shuffled.slice(0, num);
-        };
+        if (response.status === 200) {
+          const venues = response.data;
 
-        const randomSelection = getRandomVenues(venues, 4);
-        setRandomVenues(randomSelection);
+          // Shuffle venues and select 4 random venues
+          const getRandomVenues = (venues, num) => {
+            const shuffled = [...venues].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, num);
+          };
+
+          const randomSelection = getRandomVenues(venues, 4);
+          setRandomVenues(randomSelection);
+        } else {
+          throw new Error('Invalid response format');
+        }
       } catch (error) {
-        setError('Failed to fetch venues');
+        console.error('Error fetching venues:', error);
+        setError(`Failed to fetch venues: ${error.response?.data?.message || error.message}`);
       } finally {
         setLoading(false);
       }
     };
 
     fetchVenues();
-  }, []);
+  }, [date, locationValue]);
 
   const handleSelectVenue = (venue) => {
     if (!selectedVenues.find(v => v.venueId === venue.venueId)) {
@@ -71,9 +85,6 @@ const VenueSelectionPage = () => {
     navigate('/addons', { state: { eventDetails, selectedVenues } });
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <NavBar />
@@ -82,11 +93,17 @@ const VenueSelectionPage = () => {
         <div className="p-6 h-full overflow-auto flex space-x-6 w-full">
           <div className="w-3/4 bg-white rounded-lg shadow-lg p-6 overflow-y-auto max-h-[80vh]">
             <h2 className="text-2xl font-bold mb-6 text-gray-800">Venues</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {randomVenues.map(venue => (
-                <VenueCard key={venue.venueId} venue={venue} onSelect={handleSelectVenue} />
-              ))}
-            </div>
+            {loading ? (
+              <p>Loading venues...</p>
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {randomVenues.map(venue => (
+                  <VenueCard key={venue.venueId} venue={venue} onSelect={handleSelectVenue} />
+                ))}
+              </div>
+            )}
             <div className="flex justify-end mt-6">
               <button 
                 onClick={handleNext} 
