@@ -10,9 +10,8 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import VendorRegistrationPage from './pages/VendorRegistration';
 import EventSummaryPage from './pages/EventSummaryPage ';
-import UserProfile from './UserProfile';
 import EventCreationPage from './pages/EventCreation';
-import LandinngPageOne  from './pages/LandingPage';
+import LandinngPageOne  from './pages/landingpage';
 import EventDetailsPage from './pages/EventDetailsPage';
 
 const App = () => {

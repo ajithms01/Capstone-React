@@ -44,7 +44,7 @@ const Profile = () => {
       <Sidebar />
 
         {/* User Details Display */}
-        <div className="p-10 max-w-3xl mx-auto h-screen">
+        <div className="p-10 max-w-3xl mx-auto h-screen bg-sky-200">
           <div className="bg-white rounded-lg shadow-lg p-8">
             <h2 className="text-3xl font-bold mb-8 text-gray-800">User Profile</h2>
             <div className="space-y-6">

@@ -15,19 +15,19 @@ const menuItems = [
   {
     name: 'Home',
     href: '#',
-  },
-  {
-    name: 'About',
-    href: '#',
-  },
-  {
-    name: 'Contact',
-    href: '#',
-  },
-  {
-    name: 'Blogs',
-    href: '#',
-  },
+  }
+  // {
+  //   name: 'About',
+  //   href: '#',
+  // },
+  // {
+  //   name: 'Contact',
+  //   href: '#',
+  // },
+  // {
+  //   name: 'Blogs',
+  //   href: '#',
+  // },
 ]
 
 export default function LandingPageOne() {
@@ -229,7 +229,7 @@ export default function LandingPageOne() {
         <button
           type="button"
           className="rounded-md bg-black px-6 py-3 text-lg font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-          onClick={() => navigate('/join-us')}
+          onClick={() => navigate('/vendorregistration')}
         >
           Join Us
         </button>

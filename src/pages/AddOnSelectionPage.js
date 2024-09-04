@@ -72,14 +72,15 @@ const AddOnSelectionPage = () => {
       </button>
     </div>
   );
+  
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <NavBar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <div className="flex-1 p-6 overflow-auto">
-          <div className="flex space-x-6">
-            <div className="flex-grow bg-white rounded-lg shadow-lg p-6 ">
+        <div className="flex-1 p-6 flex flex-col">
+          <div className="flex flex-grow space-x-6">
+            <div className="w-3/4 bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Add-Ons</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {vendors.map(addOn => (
@@ -88,7 +89,7 @@ const AddOnSelectionPage = () => {
               </div>
             </div>
 
-            <div className="w-1/3 bg-white rounded-lg shadow-lg p-6">
+            <div className="w-1/4 bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Selected Items</h2>
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold">Venues</h3>
@@ -120,17 +121,16 @@ const AddOnSelectionPage = () => {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Integrated Next button */}
-        <div className="bg-white p-6 border-t flex justify-end">
-          <button 
-            onClick={handleNext} 
-            className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300 ease-in-out"
-            style={{ minWidth: '150px' }}
-          >
-            Next
-          </button>
+          <div className="mt-6 flex justify-end">
+            <button 
+              onClick={handleNext} 
+              className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300 ease-in-out"
+              style={{ minWidth: '150px' }}
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </div>

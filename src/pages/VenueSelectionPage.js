@@ -67,7 +67,7 @@ const VenueSelectionPage = () => {
       <NavBar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <div className="p-6 h-full overflow-auto flex space-x-6 w-full">
+        <div className="p-6 h-full overflow-auto flex space-x-6 w-full bg-sky-200">
           <div className="w-3/4 bg-white rounded-lg shadow-lg p-6">
             <h2 className="text-2xl font-bold mb-6 text-gray-800">Venues</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
