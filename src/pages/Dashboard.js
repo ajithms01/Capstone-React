@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, PlusCircle, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import NavBar from '../components/NavBar';
@@ -7,21 +7,17 @@ import NavBar from '../components/NavBar';
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('events');
   const [events, setEvents] = useState([]);
-  const [clientId, setClientId] = useState(null); // State to store clientId
+  const [clientId, setClientId] = useState(null);
   const username = localStorage.getItem('username');
+  const navigate = useNavigate();
 
-  // Fetch clientId based on username
   useEffect(() => {
     const fetchClientId = async () => {
       try {
         const response = await axios.get(`http://localhost:9598/user/getUser`, {
-          params: {
-            username: username
-          }
+          params: { username: username }
         });
-        console.log(response.data.id)
-        const fetchedClientId = response.data.id; // Adjust this line based on the actual response structure
-        setClientId(fetchedClientId);
+        setClientId(response.data.id);
       } catch (error) {
         console.error('Error fetching client ID:', error);
       }
@@ -32,17 +28,13 @@ const Dashboard = () => {
     }
   }, [username]);
 
-  // Fetch events based on clientId
   useEffect(() => {
     const fetchEvents = async () => {
       if (clientId) {
         try {
           const response = await axios.get(`http://localhost:9598/user/events`, {
-            params: {
-              userId: clientId 
-            }
+            params: { userId: clientId }
           });
-          console.log('Fetched events:', response.data); // Debugging line
           setEvents(response.data);
         } catch (error) {
           console.error('Error fetching events:', error);
@@ -51,24 +43,32 @@ const Dashboard = () => {
     };
 
     fetchEvents();
-  }, [clientId]); // Depend on clientId to refetch events when it changes
+  }, [clientId]);
+
+  const handleEventClick = (eventId) => {
+    navigate(`/details/${eventId}`);
+  };
+  
+  
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <NavBar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-
-        {/* Content Area */}
         <div className="flex-1 p-6 overflow-auto">
           {activeTab === 'events' && (
             <div>
               <h2 className="text-2xl font-semibold mb-4 text-gray-800">Events</h2>
               <div className="space-y-4">
                 {events.map((event) => (
-                  <div key={event.id} className="bg-white p-4 rounded-lg shadow">
+                  <div
+                    key={event.id}
+                    className="bg-white p-4 rounded-lg shadow cursor-pointer"
+                    onClick={() => handleEventClick(event.id)}
+                  >
                     <h3 className="font-semibold text-lg text-gray-800">{event.name}</h3>
-                    <p className="text-gray-600">{event.type}  on {event.date} </p>
+                    <p className="text-gray-600">{event.type} on {event.date}</p>
                   </div>
                 ))}
               </div>

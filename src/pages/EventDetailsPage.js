@@ -1,117 +1,106 @@
-import React, { useState } from 'react';
-import { Calendar, MapPin } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import NavBar from '../components/NavBar';
 
 const EventDetailsPage = () => {
-  const [eventDetails, setEventDetails] = useState({
-    name: '',
-    type: '',
-    location: '',
-    date: '',
-  });
+  const { eventId } = useParams();
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
+  const [error, setError] = useState(null); // Add error state
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEventDetails(prev => ({ ...prev, [name]: value }));
+  useEffect(() => {
+    const fetchEventDetails = async () => {
+      try {
+        const response = await axios.get(`http://localhost:9598/api/event/${eventId}`);
+        setEvent(response.data);
+      } catch (error) {
+        setError('Error fetching event details');
+        console.error('Error fetching event details:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEventDetails();
+  }, [eventId]);
+
+  const handleGenerateGuestLink = async () => {
+    try {
+      // Example API endpoint for generating guest link
+      const response = await axios.post(`http://localhost:9598/api/event/${eventId}/generateLink`);
+      alert(`Guest link generated: ${response.data.link}`); // Display or use the generated link
+    } catch (error) {
+      console.error('Error generating guest link:', error);
+      alert('Failed to generate guest link');
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Event details submitted:', eventDetails);
-    // Here you would typically handle form submission, e.g., sending data to a server
+  const handleMakePayment = async () => {
+    try {
+      // Example API endpoint for initiating payment
+      const response = await axios.post(`http://localhost:9598/api/event/${eventId}/payment`);
+      alert('Payment initiated successfully');
+      // Handle successful payment response here, such as redirecting or updating state
+    } catch (error) {
+      console.error('Error making payment:', error);
+      alert('Failed to make payment');
+    }
   };
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!event) return <div>No event data found</div>;
+console.log(event);
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <NavBar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-sky-200">
-          <div className="container mx-auto px-6 py-8">
-            <div className="bg-white rounded-lg shadow-xl overflow-hidden">
-              <div className="p-6 sm:p-10">
-                <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-8">Create New Event</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">Event Name</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={eventDetails.name}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="type" className="block text-sm font-medium text-gray-700">Event Type</label>
-                    <select
-                      id="type"
-                      name="type"
-                      value={eventDetails.type}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                      required
-                    >
-                      <option value="">Select event type</option>
-                      <option value="wedding">Wedding</option>
-                      <option value="conference">Conference</option>
-                      <option value="party">Party</option>
-                      <option value="djnight">DJ Night</option>
-                      <option value="concert">Concert</option>
-                      <option value="seminar">Seminar</option>
-                      <option value="workshop">Workshop</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label htmlFor="location" className="block text-sm font-medium text-gray-700">Location</label>
-                    <div className="mt-1 relative rounded-md shadow-sm">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <MapPin className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                      </div>
-                      <input
-                        type="text"
-                        id="location"
-                        name="location"
-                        value={eventDetails.location}
-                        onChange={handleInputChange}
-                        className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="date" className="block text-sm font-medium text-gray-700">Date</label>
-                    <div className="mt-1 relative rounded-md shadow-sm">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Calendar className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                      </div>
-                      <input
-                        type="date"
-                        id="date"
-                        name="date"
-                        value={eventDetails.date}
-                        onChange={handleInputChange}
-                        className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <button
-                      type="submit"
-                      className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </form>
+
+        {/* Event Details */}
+        <div className="p-6 md:p-8 lg:p-10 flex-1 mx-auto">
+          <div className="bg-white shadow-lg rounded-lg overflow-hidden ring-1 ring-gray-200">
+            <div className="p-6">
+              <h2 className="text-3xl font-bold mb-4 text-gray-800">{event.name}</h2>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-700">Type</h3>
+                  <p className="text-base text-gray-900">{event.type || 'N/A'}</p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-700">Date</h3>
+                  <p className="text-base text-gray-900">
+                    {event.date ? new Date(event.date).toLocaleDateString() : 'N/A'}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-700">Location</h3>
+                  <p className="text-base text-gray-900">{event.eventLocation || 'N/A'}</p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-700">Host</h3>
+                  <p className="text-base text-gray-900">{event.host || 'N/A'}</p>
+                </div>
               </div>
             </div>
+            <div className="bg-gray-50 p-6 flex justify-end gap-4">
+              <button
+                onClick={handleGenerateGuestLink}
+                className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-600 transition duration-300 ease-in-out"
+              >
+                Generate Guest Link
+              </button>
+              <button
+                onClick={handleMakePayment}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transform hover:scale-105 transition duration-300 ease-in-out"
+              >
+                Make Payment
+              </button>
+            </div>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

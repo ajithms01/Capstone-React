@@ -11,7 +11,7 @@ import Profile from './pages/Profile';
 import VendorRegistrationPage from './pages/VendorRegistration';
 import EventSummaryPage from './pages/EventSummaryPage ';
 import EventCreationPage from './pages/EventCreation';
-import LandinngPageOne  from './pages/Landingpage';
+import LandinngPageOne  from './pages/LandingPage';
 import EventDetailsPage from './pages/EventDetailsPage';
 import AdminProfile from './pages/AdminProfile';
 import AdminEventTable from './pages/AdminEventTable';
@@ -33,7 +33,7 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard/>} />
         <Route path="/summary" element={<EventSummaryPage/>} />
         <Route path="/vendorregistration" element={<VendorRegistrationPage/>} />
-        <Route path="/details" element={<EventDetailsPage/>} />
+        <Route path="/details/:eventId" element={<EventDetailsPage/>} />
         <Route path="admineventdetails" element={<AdminEventTable/>}/>
 
       </Routes>
