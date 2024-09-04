@@ -6,49 +6,56 @@ import AdminSideBar from '../components/AdminSideBar';
 function ApprovalPage() {
   const [vendors, setVendors] = useState([]);
 
+  // Function to fetch the vendors
+  const fetchVendors = async () => {
+    try {
+      const response = await axios.get('http://localhost:9598/vendor/status?status=PENDING');
+      setVendors(response.data);
+    } catch (error) {
+      console.error('Error fetching vendors:', error);
+      // Handle the error appropriately
+    }
+  };
+
+  // Fetch vendors on component mount
   useEffect(() => {
-    const fetchVendors = async () => {
-      try {
-        const response = await axios.get('http://localhost:9598/vendor/status?status=PENDING');
-        setVendors(response.data);
-      } catch (error) {
-        console.error('Error fetching vendors:', error);
-        // Handle the error appropriately
-      }
-    };
-
     fetchVendors();
-  }, []);
+  }, []); // Empty dependency array to fetch on mount only
 
+  // Handle vendor approval or rejection
   const handleApproval = async (vendorId, approved) => {
     try {
       if (approved) {
         // Approve the vendor
         await axios.put(`http://localhost:9598/vendor/approveVendor/${vendorId}`);
-        setVendors(vendors.map(vendor =>
-          vendor.vendorId === vendorId ? { ...vendor, status: "approved" } : vendor
-        ));
       } else {
         // Remove the vendor
-        await axios.delete(`http://localhost:9598/vendor/${vendorId}`);
-        setVendors(vendors.filter(vendor => vendor.vendorId !== vendorId));
+        const response = await axios.delete(`http://localhost:9598/vendor`, {
+          params: { id: vendorId }
+        });
+        if (response.status === 200) {
+          // Refresh the vendors list after approval or rejection
+          fetchVendors();
+        } else {
+          console.error('Error deleting vendor:', response);
+        }
       }
+      fetchVendors();
     } catch (error) {
       console.error('Error updating vendor status:', error);
-      // Handle the error appropriately
     }
   };
 
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <AdminSideBar/>
+      <AdminSideBar />
 
       {/* Main Content */}
       <div className="flex-1">
         {/* Navbar */}
-        <AdminNavBar/>
-   
+        <AdminNavBar />
+
         {/* Approval Section */}
         <div className="bg-white p-6 rounded-lg shadow-lg mt-6 mx-6">
           <h3 className="text-xl font-semibold mb-4">Vendor Approval</h3>

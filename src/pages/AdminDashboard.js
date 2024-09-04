@@ -141,8 +141,8 @@ function AdminDashboard() {
             events[selectedDay].map((event, index) => (
               <div key={index} className="flex-shrink-0 w-60 p-2 bg-white rounded-lg shadow-sm border border-gray-200">
                 <h5 className="text-md font-semibold text-gray-800 truncate">{event.name}</h5>
-                <p className="text-sm text-gray-600">Time: {event.time || 'Not specified'}</p>
-                <p className="text-sm text-gray-600">Location: {event.location || 'Not specified'}</p>
+                <p className="text-sm text-gray-600">Date: {event.date || 'Not specified'}</p>
+                <p className="text-sm text-gray-600">Type: {event.type || 'Not specified'}</p>
               </div>
             ))
           ) : (

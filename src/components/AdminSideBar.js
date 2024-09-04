@@ -10,7 +10,7 @@ function AdminSideBar() {
               <a href="/adminprofile" className="block py-2 px-4 text-lg hover:bg-blue-700 rounded transition duration-300 ease-in-out">Profile</a>
             </li>
             <li>
-              <a href="#" className="block py-2 px-4 text-lg hover:bg-blue-700 rounded transition duration-300 ease-in-out">Events</a>
+              <a href="/admindashboard" className="block py-2 px-4 text-lg hover:bg-blue-700 rounded transition duration-300 ease-in-out">Events</a>
             </li>
             <li>
               <a href="/approval" className="block py-2 px-4 text-lg hover:bg-blue-700 rounded transition duration-300 ease-in-out">Approve</a>
