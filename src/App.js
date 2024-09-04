@@ -14,6 +14,7 @@ import EventCreationPage from './pages/EventCreation';
 import LandinngPageOne  from './pages/landingpage';
 import EventDetailsPage from './pages/EventDetailsPage';
 import AdminProfile from './pages/AdminProfile';
+import AdminEventTable from './pages/AdminEventTable';
 const App = () => {
   return (
     <Router>
@@ -33,7 +34,7 @@ const App = () => {
         <Route path="/summary" element={<EventSummaryPage/>} />
         <Route path="/vendorregistration" element={<VendorRegistrationPage/>} />
         <Route path="/details" element={<EventDetailsPage/>} />
-
+        <Route path="admineventdetails" element={<AdminEventTable/>}/>
 
       </Routes>
     </Router>
