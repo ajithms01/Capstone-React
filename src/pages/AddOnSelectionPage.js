@@ -14,29 +14,33 @@ const AddOnSelectionPage = () => {
   );
   const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
-  const [location, setLocation] = useState(eventDetails.eventLocation); // Set the initial location
+  const [location, setLocation] = useState(eventDetails.eventLocation || ''); // Set the initial location
   const [date, setDate] = useState(eventDetails.eventDate ? new Date(eventDetails.eventDate) : new Date('2024-09-15')); // Set the initial date
   const [type, setType] = useState(eventDetails.eventType || "");
 
   useEffect(() => {
     const fetchVendors = async () => {
-      try {
-        const response = await axios.get('http://localhost:8082/vendor/getVendorByChoice', {
-          params: {
-            location,
-            date: date.toISOString().split('T')[0],
-            type: type || undefined,
-          },
-        });
-        setVendors(response.data);
-      } catch (error) {
-        console.error('Error fetching vendors:', error);
-        alert('Failed to fetch vendors. Please try again later.');
-      }
+        const formattedDate = date.toISOString().split('T')[0];
+        
+        try {
+            const response = await axios.get('http://localhost:9598/vendor/getVendorByChoice', {
+                params: {
+                    location: location,
+                    date: formattedDate
+                }
+            });
+
+            // Handle the response data
+            console.log('Fetched vendors:', response.data); // Confirm data structure
+            setVendors(response.data); // Update the vendors state with the fetched data
+        } catch (error) {
+            // Handle errors
+            console.error('Error fetching vendors:', error);
+        }
     };
 
     fetchVendors();
-  }, [location, date, type]);
+  }, [date, location]); // Added location to dependency array to refetch on location change
 
   const handleSelectAddOn = (addOn) => {
     if (!selectedAddOns.find(a => a.vendorId === addOn.vendorId)) {
@@ -72,7 +76,7 @@ const AddOnSelectionPage = () => {
       </button>
     </div>
   );
-  
+
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <NavBar />
@@ -83,9 +87,13 @@ const AddOnSelectionPage = () => {
             <div className="w-3/4 bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-bold mb-6">Add-Ons</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {vendors.map(addOn => (
-                  <AddOnCard key={addOn.vendorId} addOn={addOn} onSelect={handleSelectAddOn} />
-                ))}
+                {vendors.length > 0 ? (
+                  vendors.map(addOn => (
+                    <AddOnCard key={addOn.vendorId} addOn={addOn} onSelect={handleSelectAddOn} />
+                  ))
+                ) : (
+                  <p>No add-ons available.</p>
+                )}
               </div>
             </div>
 
