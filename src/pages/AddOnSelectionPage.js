@@ -14,8 +14,8 @@ const AddOnSelectionPage = () => {
   );
   const navigate = useNavigate();
   const [vendors, setVendors] = useState([]);
-  const [location, setLocation] = useState(eventDetails.eventLocation || ''); // Set the initial location
-  const [date, setDate] = useState(eventDetails.eventDate ? new Date(eventDetails.eventDate) : new Date('2024-09-15')); // Set the initial date
+  const [location, setLocation] = useState(eventDetails.eventLocation || ''); 
+  const [date, setDate] = useState(eventDetails.eventDate ? new Date(eventDetails.eventDate) : new Date('2024-09-15')); 
   const [type, setType] = useState(eventDetails.eventType || "");
 
   useEffect(() => {
@@ -30,17 +30,15 @@ const AddOnSelectionPage = () => {
                 }
             });
 
-            // Handle the response data
-            console.log('Fetched vendors:', response.data); // Confirm data structure
-            setVendors(response.data); // Update the vendors state with the fetched data
+            console.log('Fetched vendors:', response.data); 
+            setVendors(response.data);
         } catch (error) {
-            // Handle errors
             console.error('Error fetching vendors:', error);
         }
     };
 
     fetchVendors();
-  }, [date, location]); // Added location to dependency array to refetch on location change
+  }, [date, location]);
 
   const handleSelectAddOn = (addOn) => {
     if (!selectedAddOns.find(a => a.vendorId === addOn.vendorId)) {
@@ -80,13 +78,13 @@ const AddOnSelectionPage = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <NavBar />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1">
         <Sidebar />
         <div className="flex-1 p-6 flex flex-col">
           <div className="flex flex-grow space-x-6">
-            <div className="w-3/4 bg-white rounded-lg shadow-lg p-6">
+            <div className="w-3/4 bg-white rounded-lg shadow-lg p-6 overflow-y-auto">
               <h2 className="text-2xl font-bold mb-6">Add-Ons</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-96 overflow-y-auto">
                 {vendors.length > 0 ? (
                   vendors.map(addOn => (
                     <AddOnCard key={addOn.vendorId} addOn={addOn} onSelect={handleSelectAddOn} />
