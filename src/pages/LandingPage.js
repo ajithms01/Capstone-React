@@ -15,11 +15,11 @@ const menuItems = [
   {
     name: 'Home',
     href: '#',
+  },
+  {
+    name: 'Tutorials',
+    href: '/tutorials',
   }
-  // {
-  //   name: 'About',
-  //   href: '#',
-  // },
   // {
   //   name: 'Contact',
   //   href: '#',

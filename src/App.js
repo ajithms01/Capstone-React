@@ -11,10 +11,11 @@ import Profile from './pages/Profile';
 import VendorRegistrationPage from './pages/VendorRegistration';
 import EventSummaryPage from './pages/EventSummaryPage ';
 import EventCreationPage from './pages/EventCreation';
-import LandinngPageOne  from './pages/LandingPage';
+import LandinngPageOne  from './pages/Landingpage';
 import EventDetailsPage from './pages/EventDetailsPage';
 import AdminProfile from './pages/AdminProfile';
 import AdminEventTable from './pages/AdminEventTable';
+import Tutorial from './pages/Tutorial';
 const App = () => {
   return (
     <Router>
@@ -35,7 +36,8 @@ const App = () => {
         <Route path="/vendorregistration" element={<VendorRegistrationPage/>} />
         <Route path="/details/:eventId" element={<EventDetailsPage/>} />
         <Route path="admineventdetails" element={<AdminEventTable/>}/>
-
+        <Route path="/tutorials" element={<Tutorial/>}/>
+        
       </Routes>
     </Router>
   );
