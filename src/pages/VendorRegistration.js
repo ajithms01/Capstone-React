@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const VendorRegistrationPage = () => {
   const [vendorDetails, setVendorDetails] = useState({
@@ -11,6 +12,7 @@ const VendorRegistrationPage = () => {
     rate: '',
     provides: [],
   });
+  const navigate = useNavigate();
 
   const handleProvidesChange = (e) => {
     const { options } = e.target;
@@ -46,6 +48,7 @@ const VendorRegistrationPage = () => {
           rate: '',
           provides: [],
         });
+        navigate('/');
       } else {
         alert('Failed to register vendor');
       }
