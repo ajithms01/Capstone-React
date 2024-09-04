@@ -40,13 +40,10 @@ const App = () => {
         <Route path="/vendorregistration" element={<VendorRegistrationPage/>} />
         <Route path="/details/:eventId" element={<EventDetailsPage/>} />
         <Route path="admineventdetails" element={<AdminEventTable/>}/>
-<<<<<<< HEAD
         <Route path="/tutorials" element={<Tutorial/>}/>
         
-=======
         <Route path="payment" element={<PaymentPage/>} />
 
->>>>>>> ef5f9ee (123)
       </Routes>
     </Router>
   );
