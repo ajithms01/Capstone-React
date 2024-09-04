@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; 
 import Sidebar from '../components/Sidebar';
 import NavBar from '../components/NavBar';
 import jsPDF from 'jspdf';
@@ -13,11 +13,13 @@ const EventDetailsPage = () => {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
         const response = await axios.get(`http://localhost:9598/api/event/${eventId}`);
+        console.log(response);
         setEvent(response.data);
       } catch (error) {
         setError('Error fetching event details');
@@ -29,25 +31,21 @@ const EventDetailsPage = () => {
 
     fetchEventDetails();
   }, [eventId]);
+  // console.log('Fetched event details',event);
 
-  const handleGenerateGuestLink = async () => {
-    try {
-      const response = await axios.post(`http://localhost:9598/api/event/${eventId}/generateLink`);
-      alert(`Guest link generated: ${response.data.link}`);
-    } catch (error) {
-      console.error('Error generating guest link:', error);
-      alert('Failed to generate guest link');
-    }
+  const handleGenerateGuestLink = () => {
+    const formLink = "https://example.com/form"; // Replace this with the actual form link
+  
+    navigator.clipboard.writeText(formLink).then(() => {
+      alert('Form link copied to clipboard!');
+    }).catch(err => {
+      console.error('Failed to copy text: ', err);
+    });
   };
-
+  
   const handleMakePayment = async () => {
-    try {
-      const response = await axios.post(`http://localhost:9598/api/event/${eventId}/payment`);
-      alert('Payment initiated successfully');
-    } catch (error) {
-      console.error('Error making payment:', error);
-      alert('Failed to make payment');
-    }
+    navigate('/payment',{ state: { amount: event.budget ,eventId: event.eventId} });
+    console.log(event.budget,event.eventId);
   };
 
   const handleDownloadPDF = async () => {
@@ -162,12 +160,14 @@ const EventDetailsPage = () => {
               </div>
             </div>
             <div className="bg-gray-50 p-6 flex justify-end gap-4">
-              <button
-                onClick={handleGenerateGuestLink}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transform hover:scale-105 transition duration-300 ease-in-out"
-              >
-                Generate Guest Link
-              </button>
+            <div className="bg-gray-50 p-6 flex justify-end gap-4">
+            <button
+              onClick={handleGenerateGuestLink}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transform hover:scale-105 transition duration-300 ease-in-out"
+            >
+              Generate Guest Link
+            </button>
+
               <button
                 onClick={handleMakePayment}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transform hover:scale-105 transition duration-300 ease-in-out"
@@ -180,6 +180,7 @@ const EventDetailsPage = () => {
               >
                 Download PDF
               </button>
+            </div>
             </div>
           </div>
 

@@ -15,7 +15,11 @@ import LandinngPageOne  from './pages/Landingpage';
 import EventDetailsPage from './pages/EventDetailsPage';
 import AdminProfile from './pages/AdminProfile';
 import AdminEventTable from './pages/AdminEventTable';
+<<<<<<< HEAD
 import Tutorial from './pages/Tutorial';
+=======
+import PaymentPage from './pages/RazorPayment';
+>>>>>>> ef5f9ee (123)
 const App = () => {
   return (
     <Router>
@@ -36,8 +40,13 @@ const App = () => {
         <Route path="/vendorregistration" element={<VendorRegistrationPage/>} />
         <Route path="/details/:eventId" element={<EventDetailsPage/>} />
         <Route path="admineventdetails" element={<AdminEventTable/>}/>
+<<<<<<< HEAD
         <Route path="/tutorials" element={<Tutorial/>}/>
         
+=======
+        <Route path="payment" element={<PaymentPage/>} />
+
+>>>>>>> ef5f9ee (123)
       </Routes>
     </Router>
   );
