@@ -13,7 +13,7 @@ import EventSummaryPage from './pages/EventSummaryPage ';
 import EventCreationPage from './pages/EventCreation';
 import LandinngPageOne  from './pages/landingpage';
 import EventDetailsPage from './pages/EventDetailsPage';
-
+import AdminProfile from './pages/AdminProfile';
 const App = () => {
   return (
     <Router>
@@ -24,7 +24,7 @@ const App = () => {
         <Route path='/create' element={<EventCreationPage/>} />
         <Route path="/venues" element={<VenueSelectionPage />} />
         <Route path="/addons" element={<AddOnSelectionPage />} />
-    
+        <Route path="/adminprofile" element={<AdminProfile/>} />
         <Route path="/approval" element={<ApprovalPage />} />
         <Route path="/register" element={<UserRegistration />} />
         <Route path="/login" element={<LoginPage/>} />

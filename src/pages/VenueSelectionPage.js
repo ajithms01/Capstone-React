@@ -4,12 +4,26 @@ import NavBar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
 
 const dummyVenues = [
-  { id: 1, name: "Grand Ballroom", capacity: 500, location: "Midtown", rent: 5000 },
-  { id: 2, name: "Seaside Resort", capacity: 300, location: "Beach Front", rent: 4000 },
-  { id: 3, name: "Mountain Retreat", capacity: 200, location: "Highlands", rent: 3000 },
-  { id: 4, name: "City View Hall", capacity: 400, location: "City Center", rent: 4500 },
-  { id: 5, name: "Garden Paradise", capacity: 250, location: "Suburban", rent: 3500 },
-  { id: 6, name: "Historic Mansion", capacity: 150, location: "Old Town", rent: 3800 },
+  { id: 1, name: "Grand Ballroom", capacity: 500, location: "Andheri, Mumbai, Maharashtra", rent: 50000 },
+  { id: 2, name: "Seaside Resort", capacity: 300, location: "Calangute, Goa", rent: 40000 },
+  { id: 3, name: "Mountain Retreat", capacity: 200, location: "Kufri, Himachal Pradesh", rent: 30000 },
+  { id: 4, name: "City View Hall", capacity: 400, location: "Connaught Place, New Delhi", rent: 45000 },
+  { id: 5, name: "Garden Paradise", capacity: 250, location: "Jayanagar, Bangalore, Karnataka", rent: 35000 },
+  { id: 6, name: "Historic Mansion", capacity: 150, location: "Chandni Chowk, Delhi", rent: 38000 },
+  { id: 7, name: "Riverside Pavilion", capacity: 350, location: "Bagdogra, Siliguri, West Bengal", rent: 42000 },
+  { id: 8, name: "Forest Glade", capacity: 180, location: "Mysore Road, Mysore, Karnataka", rent: 32000 },
+  { id: 9, name: "Desert Oasis", capacity: 100, location: "Jaisalmer, Rajasthan", rent: 28000 },
+  { id: 10, name: "Lakeside Lodge", capacity: 220, location: "Lake Pichola, Udaipur, Rajasthan", rent: 36000 },
+  { id: 11, name: "Cultural Heritage Center", capacity: 270, location: "Assi Ghat, Varanasi, Uttar Pradesh", rent: 39000 },
+  { id: 12, name: "Cliffside Event Space", capacity: 130, location: "Auroville, Pondicherry", rent: 34000 },
+  { id: 13, name: "Urban Loft", capacity: 90, location: "Bandra West, Mumbai, Maharashtra", rent: 25000 },
+  { id: 14, name: "Countryside Barn", capacity: 160, location: "Pawna, Lonavala, Maharashtra", rent: 31000 },
+  { id: 15, name: "Palace Grounds", capacity: 600, location: "Amer Palace, Jaipur, Rajasthan", rent: 55000 },
+  { id: 16, name: "Island Villa", capacity: 120, location: "Havelock Island, Andaman and Nicobar Islands", rent: 37000 },
+  { id: 17, name: "Skyline Terrace", capacity: 240, location: "Bandra Kurla Complex, Mumbai, Maharashtra", rent: 41000 },
+  { id: 18, name: "Winter Chalet", capacity: 140, location: "Solang Valley, Manali, Himachal Pradesh", rent: 33000 },
+  { id: 19, name: "Meadow View", capacity: 200, location: "Sector 17, Chandigarh", rent: 30000 },
+  { id: 20, name: "Crystal Ballroom", capacity: 400, location: "DLF CyberHub, Gurgaon, Haryana", rent: 48000 },
 ];
 
 const VenueCard = ({ venue, onSelect }) => (
@@ -32,19 +46,21 @@ const VenueCard = ({ venue, onSelect }) => (
 const VenueSelectionPage = () => {
   const [selectedVenues, setSelectedVenues] = useState([]);
   const [totalBudget, setTotalBudget] = useState(0);
-  const [filteredVenues, setFilteredVenues] = useState([]);
+  const [randomVenues, setRandomVenues] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   
   const eventDetails = location.state?.eventDetails || {};
-  const eventLocation = eventDetails.eventLocation?.trim().toLowerCase() || "";
-  const eventDate = eventDetails.date || "";
 
   useEffect(() => {
-    console.log('Received event details:', eventDetails);
-    const filtered = dummyVenues.filter(venue => venue.location.toLowerCase() === eventLocation);
-    setFilteredVenues(filtered);
-  }, [eventLocation, eventDetails]);
+    const getRandomVenues = (venues, num) => {
+      const shuffled = [...venues].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, num);
+    };
+
+    const randomSelection = getRandomVenues(dummyVenues, 4);
+    setRandomVenues(randomSelection);
+  }, []);
 
   const handleSelectVenue = (venue) => {
     if (!selectedVenues.find(v => v.id === venue.id)) {
@@ -71,13 +87,9 @@ const VenueSelectionPage = () => {
           <div className="w-3/4 bg-white rounded-lg shadow-lg p-6">
             <h2 className="text-2xl font-bold mb-6 text-gray-800">Venues</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredVenues.length > 0 ? (
-                filteredVenues.map(venue => (
-                  <VenueCard key={venue.id} venue={venue} onSelect={handleSelectVenue} />
-                ))
-              ) : (
-                <p className="text-gray-600">No venues available in this location.</p>
-              )}
+              {randomVenues.map(venue => (
+                <VenueCard key={venue.id} venue={venue} onSelect={handleSelectVenue} />
+              ))}
             </div>
             <div className="flex justify-end mt-6">
               <button 
