@@ -25,13 +25,13 @@ const dummyVenues = [
   { id: 19, name: "Meadow View", capacity: 200, location: "Sector 17, Chandigarh", rent: 30000 },
   { id: 20, name: "Crystal Ballroom", capacity: 400, location: "DLF CyberHub, Gurgaon, Haryana", rent: 48000 },
 ];
-
+// console.log(eventDetails);
 const VenueCard = ({ venue, onSelect }) => (
   <div className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between hover:shadow-lg transition-shadow duration-300">
     <div>
       <h3 className="text-xl font-semibold mb-2 text-gray-800">{venue.name}</h3>
       <p className="text-gray-600">Capacity: {venue.capacity}</p>
-      <p className="text-gray-600">Location: {venue.location}</p>
+      {/* <p className="text-gray-600">Location: {venue.location}</p> */}
       <p className="text-gray-600">Rent: ${venue.rent}</p>
     </div>
     <button 
@@ -83,8 +83,8 @@ const VenueSelectionPage = () => {
       <NavBar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <div className="p-6 h-full overflow-auto flex space-x-6 w-full bg-sky-200">
-          <div className="w-3/4 bg-white rounded-lg shadow-lg p-6">
+        <div className="p-6 h-full overflow-auto flex space-x-6 w-full">
+          <div className="w-3/4 bg-white rounded-lg shadow-lg p-6 overflow-y-auto max-h-[80vh]">
             <h2 className="text-2xl font-bold mb-6 text-gray-800">Venues</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {randomVenues.map(venue => (
@@ -101,7 +101,7 @@ const VenueSelectionPage = () => {
             </div>
           </div>
           
-          <div className="w-1/4 bg-white rounded-lg shadow-lg p-6">
+          <div className="w-1/4 bg-white rounded-lg shadow-lg p-6 overflow-y-auto max-h-[80vh]">
             <h2 className="text-2xl font-bold mb-6 text-gray-800">Selected Venues</h2>
             <div className="space-y-4">
               {selectedVenues.map(venue => (

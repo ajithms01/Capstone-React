@@ -11,7 +11,7 @@ import Profile from './pages/Profile';
 import VendorRegistrationPage from './pages/VendorRegistration';
 import EventSummaryPage from './pages/EventSummaryPage ';
 import EventCreationPage from './pages/EventCreation';
-import LandinngPageOne  from './pages/landingpage';
+import LandinngPageOne  from './pages/LandingPage';
 import EventDetailsPage from './pages/EventDetailsPage';
 import AdminProfile from './pages/AdminProfile';
 import AdminEventTable from './pages/AdminEventTable';
