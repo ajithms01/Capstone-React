@@ -8,6 +8,7 @@ const EventSummaryPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [clientId, setClientId] = useState(null);
+  const [eventId, setEventId] = useState(null);
   const username = localStorage.getItem('username');
 
   // Fetch clientId based on username
@@ -40,32 +41,88 @@ const EventSummaryPage = () => {
 
   const handleSubmit = async () => {
     try {
+      // Extract venueId from the first item in selectedVenues array
+      const venueId = selectedVenues.length > 0 ? selectedVenues[0].venueId : null;
+      
+      // Ensure all necessary data is included in the payload
       const eventPayload = {
-        id: 0,
         name: eventDetails.eventName || "Sample Event",
-        date: eventDetails.eventDate || new Date().toISOString(),
+        date: eventDetails.eventDate ? new Date(eventDetails.eventDate).toISOString() : new Date().toISOString(),
         type: eventDetails.eventType || "General",
         userId: clientId,
         vendorIds: selectedAddOns.map(addOn => addOn.vendorId),
-        venueId: selectedVenues.length > 0 ? selectedVenues[0].id : 0, // Example logic
-        guestList: [] // Add guest details if available
+        venueId: venueId,
+        guestList: eventDetails.guestList || [] // Ensure guestList is an array, even if empty
       };
-
+  
+      console.log('Submitting event payload:', eventPayload); // Log payload
+  
       const response = await axios.post('http://localhost:9598/api/event', eventPayload, {
         headers: {
           'Content-Type': 'application/json',
         }
       });
 
+      console.log('Response from API:', response); // Log response
+
       if (response.status === 200) {
+        // Save the eventId from the response if available
+        const createdEventId = response.data.id;
+        setEventId(createdEventId);
+
+        // Generate the invoice
+        await generateInvoice(createdEventId);
+        
+        // Send order info to all vendors
+        // await sendOrderInfo(createdEventId, eventPayload.vendorIds);
+      await sendOrderInfo(createdEventId, eventPayload.vendorIds);
         navigate('/dashboard');
       } else {
-        console.error('Failed to create event');
+        console.error('Failed to create event:', response.data);
       }
     } catch (error) {
       console.error('Error creating event:', error);
     }
   };
+
+  const generateInvoice = async (eventId) => {
+    try {
+      // Construct URL with eventId parameter
+      const url = `http://localhost:9598/employee/invoice/${eventId}`;
+      
+      // Make the GET request
+      const response = await axios.get(url);
+      
+      // Handle the response
+      console.log('Invoice data:', response.data);
+      // You might want to save or display the invoice data
+    } catch (error) {
+      console.error('Error fetching invoice:', error);
+      // Handle the error appropriately
+    }
+  };
+
+  const sendOrderInfo = async (eventId, vendorIds) => {
+    try {
+        // Check if vendorIds is an array
+        if (!Array.isArray(vendorIds)) {
+            throw new TypeError('vendorIds is not an array');
+        }
+
+        // Iterate over the vendor IDs and send the order info to each vendor
+        for (let vendorId of vendorIds) {
+            // Construct the URL
+            const url = `http://localhost:9598/api/event/${eventId}/${vendorId}?eventId=${eventId}&vendorId=${vendorId}`;
+
+            // Send the POST request
+            const response = await axios.post(url, {}); // If you need to send additional data, replace {} with the actual payload
+            
+            console.log(`Order info sent successfully for vendorId ${vendorId}:`, response.data);
+        }
+    } catch (error) {
+        console.error('Error sending order info:', error);
+    }
+};
 
   const handleEdit = () => {
     // Navigate back to the previous page to allow editing
@@ -102,7 +159,7 @@ const EventSummaryPage = () => {
                 <ul className="list-disc list-inside space-y-2">
                   {selectedVenues.length > 0 ? (
                     selectedVenues.map((venue) => (
-                      <li key={venue.id} className="text-base md:text-xl text-gray-900">
+                      <li key={venue.venueId} className="text-base md:text-xl text-gray-900">
                         {venue.name} - ${venue.rent}
                       </li>
                     ))
