@@ -28,7 +28,7 @@ function Sidebar() {
             </li>
             <li>
               <Link
-                to="/events"
+                to="/dashboard"
                 className="flex items-center p-3 text-gray-700 hover:bg-indigo-50 rounded-lg transition duration-150 ease-in-out"
               >
                 <Calendar className="h-5 w-5 mr-3 text-indigo-600" />

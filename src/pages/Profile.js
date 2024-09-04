@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import NavBar from '../components/NavBar';
-import axios from 'axios'; // For making API calls
+import axios from 'axios';
 
 const Profile = () => {
   const [userDetails, setUserDetails] = useState({
@@ -11,11 +11,9 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    // Get the username from local storage
     const storedUsername = localStorage.getItem('username');
 
     if (storedUsername) {
-      // Fetch user details from the backend
       axios.get(`http://localhost:9598/user/getUser?username=${storedUsername}`)
         .then(response => {
           if (response.data) {
@@ -39,13 +37,13 @@ const Profile = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
-    <NavBar />
-    <div className="flex flex-1 overflow-hidden">
-      <Sidebar />
+      <NavBar />
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar />
 
         {/* User Details Display */}
-        <div className="p-10 max-w-3xl mx-auto h-screen bg-sky-200">
-          <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="flex-grow p-10 max-w-4xl mx-auto h-full">
+          <div className="h-full bg-white rounded-lg shadow-lg p-8 flex flex-col justify-center">
             <h2 className="text-3xl font-bold mb-8 text-gray-800">User Profile</h2>
             <div className="space-y-6">
               <div>
