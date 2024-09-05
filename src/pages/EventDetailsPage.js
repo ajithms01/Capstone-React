@@ -43,10 +43,22 @@ const EventDetailsPage = () => {
     });
   };
   
-  const handleMakePayment = async () => {
-    navigate('/payment',{ state: { amount: event.budget ,eventId: event.eventId} });
-    console.log(event.budget,event.eventId);
+  const handleMakePayment = () => {
+    if (event && event.id && event.budget) {
+      console.log('Event page Event ID:', event.id);
+      console.log('Event page Event Budget:', event.budget);
+      navigate('/payment', { 
+        state: { 
+          eventId: event.id, 
+          budget: event.budget 
+        } 
+      });
+    } else {
+      console.error('Event ID or budget is missing');
+      alert('Unable to process payment: Event details are incomplete.');
+    }
   };
+
 
   const handleDownloadPDF = async () => {
     const pdf = new jsPDF();
@@ -167,7 +179,6 @@ const EventDetailsPage = () => {
             >
               Generate Guest Link
             </button>
-
               <button
                 onClick={handleMakePayment}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transform hover:scale-105 transition duration-300 ease-in-out"

@@ -160,7 +160,7 @@ const EventSummaryPage = () => {
                   {selectedVenues.length > 0 ? (
                     selectedVenues.map((venue) => (
                       <li key={venue.venueId} className="text-base md:text-xl text-gray-900">
-                        {venue.name} - ${venue.rent}
+                        {venue.name} - ₹ {venue.rent}
                       </li>
                     ))
                   ) : (
@@ -174,7 +174,7 @@ const EventSummaryPage = () => {
                   {selectedAddOns.length > 0 ? (
                     selectedAddOns.map((addOn) => (
                       <li key={addOn.vendorId} className="text-base md:text-xl text-gray-900">
-                        {addOn.vendorName} - ${addOn.rate}
+                        {addOn.vendorName} - ₹ {addOn.rate}
                       </li>
                     ))
                   ) : (

@@ -1,34 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
 const RazorpayPayment = () => {
   const location = useLocation();
-  const [name, setName] = useState('');
+  const navigate = useNavigate();
+  const [eventDetails, setEventDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [amount, setAmount] = useState(null);
   const [email, setEmail] = useState('');
-  const [amount, setAmount] = useState('');
-const [eventId, setEventId] = useState('');
+  const [name, setName] = useState('');
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   useEffect(() => {
-    // Dynamically add the Razorpay script
+    const { eventId, budget } = location.state || {};
+    console.log('Received eventId:', eventId);
+    console.log('Received budget:', budget);
+
+    if (!eventId || !budget) {
+      setError('Event details are missing. Please go back and try again.');
+      setLoading(false);
+      return;
+    }
+
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.onload = () => console.log('Razorpay script loaded');
+    script.async = true;
+    script.onload = () => {
+      console.log('Razorpay script loaded');
+      setIsScriptLoaded(true);
+    };
     script.onerror = () => console.error('Failed to load Razorpay script');
     document.body.appendChild(script);
-console.log(location.state);
-    // Retrieve amount from navigation state
-    if (location.state) {
-        if (location.state.amount) setAmount(location.state.amount);
-        if (location.state.eventId) setEventId(location.state.eventId);
-      }
 
-    // Cleanup script on component unmount
+    // Set amount from budget when component mounts
+    if (budget) {
+      setAmount(budget.toString());
+    }
+
     return () => {
       document.body.removeChild(script);
     };
   }, [location.state]);
 
+  
+  
+
   const handlePayment = () => {
-    const amountInPaise = parseFloat(amount) * 100;
+    if (!isScriptLoaded) {
+      alert('Razorpay script not loaded yet. Please try again in a moment.');
+      return;
+    }
+
+    const amountInPaise = Math.round(parseFloat(amount) * 100);
     if (isNaN(amountInPaise) || amountInPaise <= 0) {
       alert('Please enter a valid amount.');
       return;
@@ -38,15 +62,19 @@ console.log(location.state);
       key: 'rzp_test_6iaGWu6uNTCk1q', // Replace with your Razorpay key
       amount: amountInPaise,
       currency: 'INR',
-      name: 'Your Company Name',
-      description: 'Purchase Description',
+      name: 'Eventio',
+      description: 'Event Payment',
       image: 'your_logo_url', // Replace with your logo URL
       handler: async function (response) {
-        console.log(eventId);
+        
         alert('Payment Successful! Payment ID: ' + response.razorpay_payment_id);
+        // console.log('eventId', eventId);
         try {
-            await axios.put(`http://localhost:9598/api/event/paymetUpdate/3`);
+          const { eventId, budget } = location.state || {};
+          console.log('try loop xd eventId', eventId);
+          await axios.put(`http://localhost:9598/api/event/paymetUpdate/${eventId}`);
           console.log('Payment status updated successfully');
+          navigate(`/details/${eventId}`);
         } catch (error) {
           console.error('Error updating payment status:', error);
         }
@@ -59,12 +87,9 @@ console.log(location.state);
         color: '#3399cc'
       }
     };
-    if (window.Razorpay) {
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    } else {
-      alert('Razorpay script not loaded.');
-    }
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
   };
 
   return (
@@ -81,7 +106,7 @@ console.log(location.state);
             placeholder="Enter your name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full border-gray-300 rounded-lg p-2"
+            className="w-full border border-gray-300 rounded-lg p-2"
           />
         </div>
         <div className="space-y-2">
@@ -92,7 +117,7 @@ console.log(location.state);
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border-gray-300 rounded-lg p-2"
+            className="w-full border border-gray-300 rounded-lg p-2"
           />
         </div>
         <div className="space-y-2">
@@ -103,13 +128,13 @@ console.log(location.state);
             placeholder="Enter amount"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-full border-gray-300 rounded-lg p-2"
-            readOnly // Set as read-only since amount is passed from navigation
+            className="w-full border border-gray-300 rounded-lg p-2"
+            readOnly
           />
         </div>
       </div>
       <div className="p-4 bg-gray-100 text-center">
-        <button 
+        <button
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold"
           onClick={handlePayment}
         >
