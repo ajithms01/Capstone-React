@@ -173,25 +173,34 @@ const EventDetailsPage = () => {
             </div>
             <div className="bg-gray-50 p-6 flex justify-end gap-4">
             <div className="bg-gray-50 p-6 flex justify-end gap-4">
-            <button
-              onClick={handleGenerateGuestLink}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transform hover:scale-105 transition duration-300 ease-in-out"
-            >
-              Generate Guest Link
-            </button>
-              <button
-                onClick={handleMakePayment}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transform hover:scale-105 transition duration-300 ease-in-out"
-              >
-                Make Payment
-              </button>
-              <button
-                onClick={handleDownloadPDF}
-                className="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-900 transform hover:scale-105 transition duration-300 ease-in-out"
-              >
-                Download PDF
-              </button>
-            </div>
+  {event.paymentStatus !== 'PAID' ? (
+    // Show "Make Payment" button when payment status is not 'PAID'
+    <button
+      onClick={handleMakePayment}
+      className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transform hover:scale-105 transition duration-300 ease-in-out"
+    >
+      Make Payment
+    </button>
+  ) : (
+    // Show "Generate Guest Link" and "Download PDF" buttons when payment status is 'PAID'
+    <>
+      <button
+        onClick={handleGenerateGuestLink}
+        className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transform hover:scale-105 transition duration-300 ease-in-out"
+      >
+        Generate Guest Link
+      </button>
+
+      <button
+        onClick={handleDownloadPDF}
+        className="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-900 transform hover:scale-105 transition duration-300 ease-in-out"
+      >
+        Download PDF
+      </button>
+    </>
+  )}
+</div>
+
             </div>
           </div>
 
