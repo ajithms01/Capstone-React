@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // For navigation
 import AdminNavBar from '../components/AdminNavBar';
 import AdminSideBar from '../components/AdminSideBar';
 
 function ApprovalPage() {
   const [vendors, setVendors] = useState([]);
+  const navigate = useNavigate(); // Use navigate to programmatically redirect
 
   // Function to fetch the vendors
   const fetchVendors = async () => {
@@ -13,14 +15,13 @@ function ApprovalPage() {
       setVendors(response.data);
     } catch (error) {
       console.error('Error fetching vendors:', error);
-      // Handle the error appropriately
     }
   };
 
   // Fetch vendors on component mount
   useEffect(() => {
     fetchVendors();
-  }, []); // Empty dependency array to fetch on mount only
+  }, []);
 
   // Handle vendor approval or rejection
   const handleApproval = async (vendorId, approved) => {
@@ -29,7 +30,7 @@ function ApprovalPage() {
         // Approve the vendor
         await axios.put(`http://localhost:9598/vendor/approveVendor/${vendorId}`);
       } else {
-        // Remove the vendor
+        // Reject (delete) the vendor
         const response = await axios.delete(`http://localhost:9598/vendor`, {
           params: { id: vendorId }
         });
@@ -44,6 +45,11 @@ function ApprovalPage() {
     } catch (error) {
       console.error('Error updating vendor status:', error);
     }
+  };
+
+  // Navigate to vendor details page
+  const handleVendorClick = (vendorId) => {
+    navigate(`/vendor/${vendorId}`);
   };
 
   return (
@@ -75,7 +81,11 @@ function ApprovalPage() {
                 </thead>
                 <tbody>
                   {vendors.map(vendor => (
-                    <tr key={vendor.vendorId} className="text-center">
+                    <tr
+                      key={vendor.vendorId}
+                      className="text-center hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleVendorClick(vendor.vendorId)} // Make row clickable
+                    >
                       <td className="py-2">{vendor.vendorName}</td>
                       <td className="py-2">{vendor.vendorEmail}</td>
                       <td className="py-2">{vendor.vendorPhone}</td>
@@ -84,13 +94,19 @@ function ApprovalPage() {
                       <td className="py-2">{vendor.rate}</td>
                       <td className="py-2">
                         <button
-                          onClick={() => handleApproval(vendor.vendorId, true)}
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent triggering vendor click
+                            handleApproval(vendor.vendorId, true);
+                          }}
                           className="bg-green-500 text-white px-3 py-1 rounded mr-2"
                         >
                           ✓
                         </button>
                         <button
-                          onClick={() => handleApproval(vendor.vendorId, false)}
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent triggering vendor click
+                            handleApproval(vendor.vendorId, false);
+                          }}
                           className="bg-red-500 text-white px-3 py-1 rounded"
                         >
                           ✗

@@ -17,6 +17,7 @@ import AdminProfile from './pages/AdminProfile';
 import AdminEventTable from './pages/AdminEventTable';
 import Tutorial from './pages/Tutorial';
 import PaymentPage from './pages/RazorPayment';
+import VendorDetailsPage from './pages/VendorDetailPage'
 const App = () => {
   return (
     <Router>
@@ -38,7 +39,7 @@ const App = () => {
         <Route path="/details/:eventId" element={<EventDetailsPage/>} />
         <Route path="admineventdetails" element={<AdminEventTable/>}/>
         <Route path="/tutorials" element={<Tutorial/>}/>
-        
+        <Route path="/vendor/:vendorId" element={<VendorDetailsPage/>} />
         <Route path="payment" element={<PaymentPage/>} />
 
       </Routes>
