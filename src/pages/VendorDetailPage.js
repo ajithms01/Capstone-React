@@ -57,49 +57,52 @@ function VendorDetailsPage() {
               
               <div className="flex flex-col lg:flex-row gap-6 mb-6">
                 {/* Vendor Information */}
-                <div className="w-full lg:w-1/2 bg-white shadow-md rounded-lg p-6">
-                  <h2 className="text-xl font-semibold mb-4">Vendor Information</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p><strong>Email:</strong> {vendor.vendorEmail}</p>
-                      <p><strong>Phone:</strong> {vendor.vendorPhone}</p>
-                      <p><strong>Location:</strong> {vendor.vendorLocation}</p>
-                    </div>
-                    <div>
-                      <p><strong>Type:</strong> {vendor.type}</p>
-                      <p><strong>Rate:</strong> {vendor.rate}</p>
-                      <p><strong>Rating:</strong> {vendor.rating || 'N/A'}</p>
-                    </div>
-                  </div>
-                </div>
+                <div className="flex flex-col lg:flex-row w-full">
+      <div className="w-full lg:w-1/2 bg-white shadow-md rounded-lg p-6 mb-4 lg:mb-0 lg:mr-4">
+        <h2 className="text-xl font-semibold mb-4">Vendor Information</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p><strong>Email:</strong> {vendor.vendorEmail}</p>
+            <p><strong>Phone:</strong> {vendor.vendorPhone}</p>
+            <p><strong>Location:</strong> {vendor.vendorLocation}</p>
+          </div>
+          <div>
+            <p><strong>Type:</strong> {vendor.type}</p>
+            <p><strong>Rate:</strong> {vendor.rate}</p>
+            <p><strong>Rating:</strong> {vendor.rating || 'N/A'}</p>
+          </div>
+        </div>
+      </div>
 
-                {/* Vendor Images Section */}
-                <div className="w-full lg:w-1/2 bg-white shadow-md rounded-lg p-6">
-                  <h2 className="text-xl font-semibold mb-4">Vendor Images</h2>
-                  {vendor.images && vendor.images.length > 0 ? (
-                    vendor.images.length === 1 ? (
-                      <img
-                        src={vendor.images[0]}
-                        alt="Vendor"
-                        className="w-full h-auto object-cover rounded-lg shadow-md"
-                      />
-                    ) : (
-                      <Slider {...sliderSettings}>
-                        {vendor.images.map((image, index) => (
-                          <div key={index}>
-                            <img
-                              src={image}
-                              alt={`Vendor image ${index + 1}`}
-                              className="w-full h-64 object-cover rounded-lg shadow-md"
-                            />
-                          </div>
-                        ))}
-                      </Slider>
-                    )
-                  ) : (
-                    <p>No images available.</p>
-                  )}
+      <div className="w-full lg:w-1/2 bg-white shadow-md rounded-lg p-6">
+        <h2 className="text-xl font-semibold mb-4">Vendor Images</h2>
+        {vendor.images && vendor.images.length > 0 ? (
+          vendor.images.length === 1 ? (
+            <img
+              src={vendor.images[0]}
+              alt="Vendor"
+              className="w-full h-auto object-cover rounded-lg shadow-md"
+            />
+          ) : (
+            <Slider {...sliderSettings}>
+              {vendor.images.map((image, index) => (
+                <div key={index}>
+                  <img
+                    src={image}
+                    alt={`Vendor image ${index + 1}`}
+                    className="w-full h-64 object-cover rounded-lg shadow-md"
+                  />
                 </div>
+              ))}
+            </Slider>
+          )
+        ) : (
+          <p>No images available.</p>
+        )}
+      </div>
+    </div>
+
+                
               </div>
 
               {/* Services Offered */}
